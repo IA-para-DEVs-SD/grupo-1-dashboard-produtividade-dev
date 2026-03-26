@@ -25,3 +25,14 @@ Thumbs.db
 # Logs
 *.log
 logs/
+
+# Banco de Dados
+*.db
+*.sqlite
+*.sqlite3
+
+# ChromaDB
+chroma_data/
+
+# Hypothesis
+.hypothesis/
