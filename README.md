@@ -119,10 +119,10 @@ cp .env.example .env
 # edite o .env com seu GITHUB_TOKEN e configurações LLM
 
 uv sync
-uv run uvicorn src.main:app --reload
+uv run python -m src.main
 ```
 
-O backend estará disponível em `http://localhost:8000`. Verifique acessando `http://localhost:8000/health`.
+O backend estará disponível em `http://localhost:8000` (ou na porta definida em `APP_PORT` no `.env`).
 
 ### Frontend
 
