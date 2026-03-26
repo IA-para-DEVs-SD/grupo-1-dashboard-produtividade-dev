@@ -12,6 +12,7 @@ dependencies = [
     "chromadb",
     "aisuite",
     "sqlite-utils",
+    "sqlmodel",
 ]
 
 [dependency-groups]
