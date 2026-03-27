@@ -1,0 +1,34 @@
+[project]
+name = "dashboard-produtividade-backend"
+version = "0.1.0"
+description = "Backend do Dashboard de Produtividade Dev"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "loguru",
+    "python-dotenv",
+    "langchain",
+    "chromadb",
+    "aisuite",
+    "sqlite-utils",
+    "sqlmodel",
+]
+
+[dependency-groups]
+dev = [
+    "httpx",
+    "hypothesis",
+    "pytest",
+    "ruff",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

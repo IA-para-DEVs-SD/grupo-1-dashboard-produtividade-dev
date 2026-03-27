@@ -21,12 +21,14 @@ Dashboard inteligente que analisa produtividade de desenvolvedores a partir de d
 | Camada | Tecnologia |
 |--------|-----------|
 | Data Source | GitHub GraphQL API |
-| Backend | FastAPI + Cron |
+| Backend | FastAPI + Uvicorn + LangChain |
 | Vector DB | ChromaDB |
-| Embeddings | HuggingFace MiniLM (384D) |
+| Embeddings | HuggingFace (`intfloat/multilingual-e5-large`) |
 | LLM | aisuite (Ollama / OpenAI) |
-| Frontend | React + Chart.js |
-| Deploy | Vercel + Railway |
+| Frontend | Streamlit + Plotly |
+| Banco de Dados | SQLite (`sqlite-utils`) |
+| Logging | Loguru |
+| Gerenciamento | uv |
 
 ---
 
@@ -56,8 +58,8 @@ graph TB
         R6[Insight estruturado]
     end
 
-    subgraph Frontend["React Dashboard"]
-        F1[Gráficos Chart.js]
+    subgraph Frontend["Streamlit Dashboard"]
+        F1[Gráficos Plotly]
         F2[Chat RAG]
         F3[KPIs Live]
     end
@@ -74,17 +76,25 @@ graph TB
 ```
 dashboard-produtividade-dev/
 ├── backend/
-│   ├── src/            # Código-fonte FastAPI
-│   ├── tests/          # Testes
-│   ├── docs/           # Documentação do backend
+│   ├── src/
+│   │   ├── __init__.py
+│   │   └── main.py          # Aplicação FastAPI
+│   ├── tests/                # Testes
+│   ├── docs/                 # Documentação do backend
+│   ├── pyproject.toml
+│   ├── .python-version
 │   └── .env.example
 ├── frontend/
-│   ├── src/            # Componentes React
-│   ├── tests/          # Testes
-│   ├── docs/           # Documentação do frontend
+│   ├── src/
+│   │   ├── __init__.py
+│   │   └── app.py            # Aplicação Streamlit
+│   ├── tests/                # Testes
+│   ├── docs/                 # Documentação do frontend
+│   ├── pyproject.toml
+│   ├── .python-version
 │   └── .env.example
-├── scripts/            # Scripts auxiliares
-├── .github/            # Workflows CI/CD
+├── scripts/                  # Scripts auxiliares
+├── .github/                  # Workflows CI/CD
 └── README.md
 ```
 
@@ -94,10 +104,10 @@ dashboard-produtividade-dev/
 
 ### Pré-requisitos
 
-- Python 3.11+
-- Node.js 18+
+- [Python 3.12](https://www.python.org/downloads/)
+- [uv](https://docs.astral.sh/uv/getting-started/installation/) — gerenciador de dependências e ambientes virtuais
 - Token GitHub com escopo `read:user` e `repo`
-- [Ollama](https://ollama.ai) instalado localmente (modo dev)
+- [Ollama](https://ollama.com/) instalado localmente (modo dev)
 
 ### Backend
 
@@ -105,28 +115,27 @@ dashboard-produtividade-dev/
 git clone https://github.com/IA-para-DEVs-SD/dashboard-produtividade-dev.git
 cd dashboard-produtividade-dev/backend
 
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-
-pip install -r requirements.txt
-
 cp .env.example .env
 # edite o .env com seu GITHUB_TOKEN e configurações LLM
 
-uvicorn src.main:app --reload
+uv sync
+uv run python -m src.main
 ```
+
+O backend estará disponível em `http://localhost:8000` (ou na porta definida em `APP_PORT` no `.env`).
 
 ### Frontend
 
 ```bash
 cd frontend
 
-npm install
-
 cp .env.example .env
 
-npm run dev
+uv sync
+uv run streamlit run src/app.py
 ```
+
+O frontend estará disponível em `http://localhost:8501`.
 
 ---
 
@@ -135,19 +144,23 @@ npm run dev
 ### Backend (`backend/.env`)
 
 ```env
-GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
-GITHUB_USERNAME=seu_usuario
-LLM_PROVIDER=ollama
-LLM_MODEL=llama3.1
-CHROMA_PATH=./data/chroma
-CHROMA_COLLECTION=github_activity
-INGESTION_DAYS_BACK=90
+GITHUB_TOKEN=seu_token_aqui
+GITHUB_USERNAME=seu_usuario_aqui
+GITHUB_GRAPHQL_URL=https://api.github.com/graphql
+CHROMADB_PATH=./chroma_data
+SQLITE_DB_PATH=./data.db
+LOG_LEVEL=DEBUG
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=llama3.1:8b
+EMBEDDING_MODEL=intfloat/multilingual-e5-large
+APP_PORT=8000
 ```
 
 ### Frontend (`frontend/.env`)
 
 ```env
-VITE_API_URL=http://localhost:8000
+BACKEND_API_URL=http://localhost:8000
+STREAMLIT_SERVER_PORT=8501
 ```
 
 ---
