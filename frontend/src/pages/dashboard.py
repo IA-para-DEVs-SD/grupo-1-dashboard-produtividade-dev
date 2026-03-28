@@ -1,9 +1,14 @@
 """Página Dashboard — KPIs e gráficos com visual profissional."""
 
-import streamlit as st
 import plotly.graph_objects as go
+import streamlit as st
 
-from src.api_client import get_github_status, get_metrics, get_metrics_weekly, get_export_url
+from src.api_client import (
+    get_export_url,
+    get_github_status,
+    get_metrics,
+    get_metrics_weekly,
+)
 
 
 def render():
@@ -62,10 +67,12 @@ def render():
         str_to = str(date_to) if date_to else None
         with f4:
             st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
-            st.link_button("📥 CSV", get_export_url("csv", str_from, str_to), use_container_width=True)
+            csv_url = get_export_url("csv", str_from, str_to)
+            st.link_button("📥 CSV", csv_url, use_container_width=True)
         with f5:
             st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
-            st.link_button("📄 PDF", get_export_url("pdf", str_from, str_to), use_container_width=True)
+            pdf_url = get_export_url("pdf", str_from, str_to)
+            st.link_button("📄 PDF", pdf_url, use_container_width=True)
 
     st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
 
@@ -76,7 +83,7 @@ def render():
             st.warning(m["error"])
         else:
             _render_kpis(m, visible)
-    except Exception as e:
+    except Exception:
         st.info("Carregando métricas... Execute a ingestão de dados primeiro.")
 
     st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)

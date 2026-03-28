@@ -110,7 +110,11 @@ def _render_llm_section():
                     placeholder="••••••••" if has_api_key else "sk-...",
                 )
 
-            info = "⚡ Local — mais lento, sem custo" if provider == "ollama" else "🚀 API — mais rápido, com custo"
+            info = (
+                "⚡ Local — mais lento, sem custo"
+                if provider == "ollama"
+                else "🚀 API — mais rápido, com custo"
+            )
             st.caption(info)
 
             submitted = st.form_submit_button("💾 Salvar LLM", use_container_width=True)
