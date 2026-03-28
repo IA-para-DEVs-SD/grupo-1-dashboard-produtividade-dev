@@ -1,58 +1,58 @@
 ---
-description: Coding standards — error handling, commits, feedback loops, quality rules
+description: Padrões de código — tratamento de erros, commits, feedback loops, regras de qualidade
 inclusion: auto
 ---
 
-# Coding Standards Steering
+# Padrões de Código
 
-## General rules
-- No unused imports
-- No commented-out code in production
-- No magic numbers — use named constants
-- Methods should do one thing and be under 30 lines when possible
-- Prefer composition over inheritance
+## Regras gerais
+- Sem imports não utilizados
+- Sem código comentado em produção
+- Sem números mágicos — usar constantes nomeadas
+- Métodos devem fazer uma coisa e ter menos de 30 linhas quando possível
+- Preferir composição sobre herança
 
-## Error handling
-- Never swallow exceptions silently
-- Use specific exception types, not generic catch-all
-- Log errors with context (what was being done, with what input)
-- Return meaningful error responses to callers
+## Tratamento de erros
+- Nunca engolir exceções silenciosamente
+- Usar tipos de exceção específicos, não catch-all genérico
+- Logar erros com contexto (o que estava sendo feito, com qual input)
+- Retornar respostas de erro significativas para os chamadores
 
 ## Feedback loops
 
-Never commit without running feedback loops.
+Nunca commitar sem rodar os feedback loops.
 
-### Required loops (run after every task)
-<!-- Customize for your stack -->
+### Loops obrigatórios (rodar após cada tarefa)
+<!-- Customize para sua stack -->
 ```bash
-# Compilation / type checking
+# Compilação / verificação de tipos
 # mvn compile | npm run typecheck | mypy src/
 
-# Tests
+# Testes
 # mvn test | npm test | pytest
 
 # Linting
 # mvn checkstyle:check | npm run lint | ruff check src/
 ```
 
-### Rules
-- Do NOT commit if any feedback loop fails. Fix issues first.
-- Run loops after each task, not at the end of a batch.
+### Regras
+- NÃO commitar se qualquer feedback loop falhar. Corrija os problemas primeiro.
+- Rodar loops após cada tarefa, não no final de um batch.
 
-## Explicit quality
+## Qualidade explícita
 
-This is production code. Follow existing patterns. Add tests. Handle errors. Log meaningfully. The AI amplifies what it sees in the codebase — keep it clean.
+Este é código de produção. Siga os padrões existentes. Adicione testes. Trate erros. Logue de forma significativa. A IA amplifica o que vê no codebase — mantenha-o limpo.
 
-## Atomic commits
+## Commits atômicos
 
-One task = one commit. Format: `type(scope): description`
+Uma tarefa = um commit. Formato: `type(scope): description`
 
-Types: feat, fix, refactor, test, docs, chore, migration
+Tipos: feat, fix, refactor, test, docs, chore, migration
 
-### Clean state rule
-Every commit must leave the codebase in a mergeable state. No half-implemented features, no broken builds.
+### Regra de estado limpo
+Todo commit deve deixar o codebase em estado mergeável. Sem features pela metade, sem builds quebrados.
 
-### Markdown tampering protection
-- Do NOT edit tasks.md except to mark checkboxes as `[x]`
-- Do NOT remove, reorder, or rewrite tasks
-- State files (PROGRESS.md, CHANGELOG_AI.md) are append-only during execution
+### Proteção contra alteração de markdown
+- NÃO editar tasks.md exceto para marcar checkboxes como `[x]`
+- NÃO remover, reordenar ou reescrever tarefas
+- Arquivos de estado (PROGRESS.md, CHANGELOG_AI.md) são append-only durante execução

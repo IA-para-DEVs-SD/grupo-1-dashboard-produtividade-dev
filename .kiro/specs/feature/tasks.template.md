@@ -1,77 +1,77 @@
-# 📋 Tasks — [Feature Name]
+# 📋 Tarefas — [Nome da Feature]
 
-## Progress Dashboard
+## Painel de Progresso
 
-| Metric | Value |
-|--------|-------|
-| Total Tasks | <!-- N --> |
-| Completed | <!-- 0/N --> |
-| Verification | <!-- ✅ All passed / ⚠️ Pending / ❌ Has failures --> |
-| Risk Level | <!-- 🟢 Low / 🟡 Medium / 🔴 High --> |
-| Execution Mode | <!-- HITL / AFK --> |
+| Métrica | Valor |
+|---------|-------|
+| Total de Tarefas | <!-- N --> |
+| Concluídas | <!-- 0/N --> |
+| Verificação | <!-- ✅ Todas passaram / ⚠️ Pendente / ❌ Tem falhas --> |
+| Nível de Risco | <!-- 🟢 Baixo / 🟡 Médio / 🔴 Alto --> |
+| Modo de Execução | <!-- HITL / AFK --> |
 
 ## Feedback Loops
 
-Run after every task. Do NOT commit if any fail.
+Rodar após cada tarefa. NÃO commitar se algum falhar.
 
 ```bash
-# Replace with your project's actual commands
-mvn test                    # tests must pass
-mvn compile                 # types/compilation must pass
-mvn checkstyle:check        # lint must pass
+# Substitua pelos comandos reais do seu projeto
+mvn test                    # testes devem passar
+mvn compile                 # tipos/compilação devem passar
+mvn checkstyle:check        # lint deve passar
 ```
 
-## Task List
+## Lista de Tarefas
 
-<!-- Status key:
-  [✅] — Done + verified (Truth Loop passed)
-  [⚠️] — Done, pending verification
-  [❌] — Verification failed
-  [🔄] — In progress
-  [ ]  — Not started
+<!-- Legenda de status:
+  [✅] — Concluída + verificada (Truth Loop passou)
+  [⚠️] — Concluída, verificação pendente
+  [❌] — Verificação falhou
+  [🔄] — Em progresso
+  [ ]  — Não iniciada
 -->
 
-### [ ] Task 1: [Title]
-- **Risk:** <!-- 1-5 (1=low, 5=high) → reason -->
-- **Description:** <!-- What to do — one thing only -->
-- **Files:** <!-- Expected files to create/modify -->
-- **Done criteria:**
-  - [ ] <!-- e.g., Unit test passes -->
-  - [ ] <!-- e.g., Migration runs without error -->
-  - [ ] Feedback loops pass
-- **Commit:** `<!-- e.g., feat(auth): add login endpoint -->`
-- **Dependencies:** <!-- Other tasks that must be done first, or "none" -->
+### [ ] Tarefa 1: [Título]
+- **Risco:** <!-- 1-5 (1=baixo, 5=alto) → motivo -->
+- **Descrição:** <!-- O que fazer — uma coisa apenas -->
+- **Arquivos:** <!-- Arquivos esperados para criar/modificar -->
+- **Critérios de conclusão:**
+  - [ ] <!-- ex: Teste unitário passa -->
+  - [ ] <!-- ex: Migração roda sem erro -->
+  - [ ] Feedback loops passam
+- **Commit:** `<!-- ex: feat(auth): add login endpoint -->`
+- **Dependências:** <!-- Outras tarefas que devem ser feitas primeiro, ou "nenhuma" -->
 
-### [ ] Task 2: [Title]
-- **Risk:** <!-- 1-5 → reason -->
-- **Description:**
-- **Files:**
-- **Done criteria:**
+### [ ] Tarefa 2: [Título]
+- **Risco:** <!-- 1-5 → motivo -->
+- **Descrição:**
+- **Arquivos:**
+- **Critérios de conclusão:**
   - [ ]
-  - [ ] Feedback loops pass
+  - [ ] Feedback loops passam
 - **Commit:** `<!-- -->`
-- **Dependencies:**
+- **Dependências:**
 
-<!-- Add more tasks as needed -->
+<!-- Adicione mais tarefas conforme necessário -->
 
-## Execution Order
+## Ordem de Execução
 
-Tasks ordered by risk (highest first):
+Tarefas ordenadas por risco (maior primeiro):
 
-1. Task 1 — <!-- why first: architectural decision / integration point / spike -->
-2. Task 2 — <!-- reason -->
+1. Tarefa 1 — <!-- por que primeiro: decisão arquitetural / ponto de integração / spike -->
+2. Tarefa 2 — <!-- motivo -->
 
-## Verification Summary
+## Resumo de Verificação
 
-<!-- Filled by the Truth Loop after verification -->
+<!-- Preenchido pelo Truth Loop após verificação -->
 
-| Task | Status | Notes |
-|------|--------|-------|
-| Task 1 | <!-- ✅ / ⚠️ / ❌ --> | <!-- --> |
-| Task 2 | <!-- ✅ / ⚠️ / ❌ --> | <!-- --> |
+| Tarefa | Status | Notas |
+|--------|--------|-------|
+| Tarefa 1 | <!-- ✅ / ⚠️ / ❌ --> | <!-- --> |
+| Tarefa 2 | <!-- ✅ / ⚠️ / ❌ --> | <!-- --> |
 
-## Notes
+## Notas
 
-- Each task = one Ralph iteration = one atomic commit
-- If a task touches > 5 files, split it
-- Never outrun your feedback loops
+- Cada tarefa = uma iteração Ralph = um commit atômico
+- Se uma tarefa toca > 5 arquivos, dividir
+- Nunca ultrapassar seus feedback loops

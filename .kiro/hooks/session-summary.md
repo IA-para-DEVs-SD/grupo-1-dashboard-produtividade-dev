@@ -1,42 +1,42 @@
 ---
-description: Auto-update STATE.md with session summary at end of work
+description: Auto-atualizar STATE.md com resumo da sessão ao final do trabalho
 event: manual
 ---
 
-# Session Summary Hook
+# Hook de Resumo de Sessão
 
-## Conditions
-- User says "end session", "wrap up", "done for today", or similar
-- OR the Ralph loop completes all tasks for a spec
-- OR the user explicitly asks to update state
+## Condições
+- Usuário diz "encerrar sessão", "finalizar", "terminei por hoje", ou similar
+- OU o loop Ralph completa todas as tarefas de uma spec
+- OU o usuário explicitamente pede para atualizar o estado
 
-## Instructions
+## Instruções
 
-Read the following to understand what happened this session:
-1. `git log --oneline -20` — recent commits
-2. `.kiro/state/CHANGELOG_AI.md` — what changed and why
-3. Any `PROGRESS.md` files in active specs
+Ler o seguinte para entender o que aconteceu nesta sessão:
+1. `git log --oneline -20` — commits recentes
+2. `.kiro/state/CHANGELOG_AI.md` — o que mudou e por quê
+3. Quaisquer arquivos `PROGRESS.md` em specs ativas
 
-Then update `.kiro/state/STATE.md` with a session summary block:
+Então atualizar `.kiro/state/STATE.md` com um bloco de resumo de sessão:
 
 ```markdown
-## YYYY-MM-DD — Session summary
+## YYYY-MM-DD — Resumo da sessão
 
-### What was done
-- (list completed tasks, features, fixes)
+### O que foi feito
+- (listar tarefas concluídas, features, correções)
 
-### What's in progress
-- (list partially completed work, if any)
+### O que está em progresso
+- (listar trabalho parcialmente concluído, se houver)
 
-### What's next
-- (list the logical next steps)
+### Próximos passos
+- (listar os próximos passos lógicos)
 
-### Open risks
-- (list any new risks identified during this session)
+### Riscos abertos
+- (listar quaisquer novos riscos identificados durante esta sessão)
 ```
 
-Rules:
-- Append to STATE.md, never overwrite previous entries
-- Be specific — reference spec names, task numbers, file names
-- If a spec was completed, note it and mention if it was archived
-- If decisions were made, verify they're also in DECISIONS.md
+Regras:
+- Adicionar ao STATE.md, nunca sobrescrever entradas anteriores
+- Ser específico — referenciar nomes de specs, números de tarefas, nomes de arquivos
+- Se uma spec foi concluída, notar e mencionar se foi arquivada
+- Se decisões foram tomadas, verificar se também estão em DECISIONS.md

@@ -1,28 +1,28 @@
-# Design — [Feature Name]
+# Design — [Nome da Feature]
 
-## Approach
-<!-- High-level description of how this will be implemented -->
+## Abordagem
+<!-- Descrição de alto nível de como isso será implementado -->
 
-## Components affected
-| Component | Change type | Risk |
-|-----------|------------|------|
-| <!-- e.g., UserService --> | <!-- Modified --> | <!-- Low --> |
+## Componentes afetados
+| Componente | Tipo de mudança | Risco |
+|------------|-----------------|-------|
+| <!-- ex: UserService --> | <!-- Modificado --> | <!-- Baixo --> |
 
-## Data model changes
-<!-- New tables, columns, indexes, or migrations needed -->
+## Mudanças no modelo de dados
+<!-- Novas tabelas, colunas, índices ou migrações necessárias -->
 
-## API changes
-<!-- New or modified endpoints, request/response shapes -->
+## Mudanças na API
+<!-- Endpoints novos ou modificados, formatos de request/response -->
 
-## Key decisions
-| Decision | Rationale | Alternatives considered |
-|----------|-----------|----------------------|
-| <!-- e.g., Use event-based approach --> | <!-- Decouples modules --> | <!-- Direct call, message queue --> |
+## Decisões principais
+| Decisão | Justificativa | Alternativas consideradas |
+|---------|---------------|---------------------------|
+| <!-- ex: Usar abordagem baseada em eventos --> | <!-- Desacopla módulos --> | <!-- Chamada direta, fila de mensagens --> |
 
-## Risks
-| Risk | Impact | Mitigation |
-|------|--------|-----------|
-| <!-- e.g., Migration on large table --> | <!-- Downtime --> | <!-- Run CONCURRENTLY --> |
+## Riscos
+| Risco | Impacto | Mitigação |
+|-------|---------|-----------|
+| <!-- ex: Migração em tabela grande --> | <!-- Downtime --> | <!-- Rodar CONCURRENTLY --> |
 
-## Rollback strategy
-<!-- How to revert this change if something goes wrong -->
+## Estratégia de rollback
+<!-- Como reverter esta mudança se algo der errado -->

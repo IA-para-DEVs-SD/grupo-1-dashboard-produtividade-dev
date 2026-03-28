@@ -1,18 +1,18 @@
 ---
-description: Verify task completion after execution
+description: Verificar conclusão da tarefa após execução
 event: on_task_complete
 ---
 
-## Conditions
+## Condições
 
-- A task from a spec in `.kiro/specs/` has just been completed
-- The task file (tasks.md) exists with structured task entries
+- Uma tarefa de uma spec em `.kiro/specs/` acabou de ser concluída
+- O arquivo de tarefas (tasks.md) existe com entradas estruturadas
 
-## Instructions
+## Instruções
 
-- Read the completed task entry from tasks.md
-- Check each done criterion — verify it was actually satisfied
-- Compare the files listed in the task with the files actually modified in the working tree — flag unexpected changes or missing expected changes
-- If the task changed behavior (not just refactoring), verify a test exists that covers the change
-- Verify `.kiro/state/CHANGELOG_AI.md` has an entry for this task — if not, remind the user to add one
-- If the task was the last one in the spec, suggest running the verifier agent for a full delivery check
+- Ler a entrada da tarefa concluída em tasks.md
+- Verificar cada critério de conclusão — confirmar que foi realmente satisfeito
+- Comparar os arquivos listados na tarefa com os arquivos realmente modificados na working tree — sinalizar mudanças inesperadas ou mudanças esperadas ausentes
+- Se a tarefa alterou comportamento (não apenas refatoração), verificar se existe um teste que cobre a mudança
+- Verificar se `.kiro/state/CHANGELOG_AI.md` tem uma entrada para esta tarefa — se não, lembrar o usuário de adicionar
+- Se a tarefa foi a última da spec, sugerir rodar o agente verificador para uma checagem completa de entrega

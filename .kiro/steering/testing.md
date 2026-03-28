@@ -1,30 +1,30 @@
 ---
-description: Testing strategy — what to test, how to test, coverage expectations
+description: Estratégia de testes — o que testar, como testar, expectativas de cobertura
 inclusion: auto
 ---
 
-# Testing Steering
+# Diretrizes de Testes
 
-## Test strategy
-- Unit tests for all service-layer business logic
-- Integration tests for data access with real database (Testcontainers or equivalent)
-- API tests for endpoints (request/response validation)
+## Estratégia de testes
+- Testes unitários para toda lógica de negócio na camada de serviços
+- Testes de integração para acesso a dados com banco real (Testcontainers ou equivalente)
+- Testes de API para endpoints (validação de request/response)
 
-## Coverage expectations
-- New service methods: 80%+ branch coverage
-- Bug fixes: must include a regression test that fails without the fix
-- Refactoring: all existing tests must pass without modification
-- Legacy code with no tests: add characterization test before modifying
+## Expectativas de cobertura
+- Novos métodos de serviço: 80%+ de cobertura de branches
+- Correções de bugs: devem incluir teste de regressão que falha sem a correção
+- Refatoração: todos os testes existentes devem passar sem modificação
+- Código legado sem testes: adicionar teste de caracterização antes de modificar
 
-## Test structure
-Use Arrange-Act-Assert pattern. Name tests descriptively: `should_expectedResult_when_condition`.
+## Estrutura dos testes
+Use o padrão Arrange-Act-Assert. Nomeie testes descritivamente: `should_resultadoEsperado_when_condicao`.
 
-## Test data
-- Use builders/factories for test entities
-- Never share mutable state between tests
-- Never depend on data from other tests
+## Dados de teste
+- Use builders/factories para entidades de teste
+- Nunca compartilhe estado mutável entre testes
+- Nunca dependa de dados de outros testes
 
-## What NOT to test
-- Framework internals (ORM cascade, DI wiring)
+## O que NÃO testar
+- Internos do framework (cascade do ORM, wiring de DI)
 - Getters/setters
-- Third-party library behavior
+- Comportamento de bibliotecas de terceiros

@@ -1,45 +1,45 @@
 ---
-description: Detect and record architectural decisions in DECISIONS.md
+description: Detectar e registrar decisões arquiteturais em DECISIONS.md
 event: manual
 ---
 
-# Decision Tracker Hook
+# Hook de Rastreamento de Decisões
 
-## Conditions
-- After a planning session where technology choices or architectural patterns were decided
-- After a task implementation that introduced a new pattern or dependency
-- When the user explicitly says "record this decision" or "log decision"
-- After the planner agent produces a design.md with architectural choices
+## Condições
+- Após uma sessão de planejamento onde escolhas de tecnologia ou padrões arquiteturais foram decididos
+- Após uma implementação de tarefa que introduziu um novo padrão ou dependência
+- Quando o usuário explicitamente diz "registrar esta decisão" ou "logar decisão"
+- Após o agente planner produzir um design.md com escolhas arquiteturais
 
-## Instructions
+## Instruções
 
-Scan the current session for architectural decisions. Look for:
-1. Technology choices (library A over library B, pattern X over pattern Y)
-2. Structural decisions (where to put code, how to organize modules)
-3. Trade-offs discussed (performance vs simplicity, consistency vs flexibility)
-4. Rejected alternatives (what was considered but not chosen, and why)
+Escanear a sessão atual por decisões arquiteturais. Procurar por:
+1. Escolhas de tecnologia (biblioteca A sobre biblioteca B, padrão X sobre padrão Y)
+2. Decisões estruturais (onde colocar código, como organizar módulos)
+3. Trade-offs discutidos (performance vs simplicidade, consistência vs flexibilidade)
+4. Alternativas rejeitadas (o que foi considerado mas não escolhido, e por quê)
 
-For each decision found, append an entry to `.kiro/state/DECISIONS.md`:
+Para cada decisão encontrada, adicionar uma entrada em `.kiro/state/DECISIONS.md`:
 
 ```markdown
-### YYYY-MM-DD — [Short decision title]
+### YYYY-MM-DD — [Título curto da decisão]
 
-**Context:** Why this decision was needed.
+**Contexto:** Por que esta decisão foi necessária.
 
-**Decision:** What was decided.
+**Decisão:** O que foi decidido.
 
-**Alternatives considered:**
-- Alternative A — rejected because...
-- Alternative B — rejected because...
+**Alternativas consideradas:**
+- Alternativa A — rejeitada porque...
+- Alternativa B — rejeitada porque...
 
-**Consequences:** What this means going forward.
+**Consequências:** O que isso significa daqui para frente.
 
-**Spec:** [spec-name] (if related to a specific spec)
+**Spec:** [nome-da-spec] (se relacionada a uma spec específica)
 ```
 
-Rules:
-- Append only — never modify or delete previous decisions
-- Be specific — "chose CDI events over direct method call" not "chose an approach"
-- Include the rejected alternatives — future sessions need to know what was already considered
-- If a decision contradicts a previous one, note it explicitly and explain why
-- One entry per decision — don't bundle unrelated decisions
+Regras:
+- Apenas adicionar — nunca modificar ou deletar decisões anteriores
+- Ser específico — "escolheu eventos CDI sobre chamada direta de método" não "escolheu uma abordagem"
+- Incluir as alternativas rejeitadas — sessões futuras precisam saber o que já foi considerado
+- Se uma decisão contradiz uma anterior, notar explicitamente e explicar por quê
+- Uma entrada por decisão — não agrupar decisões não relacionadas

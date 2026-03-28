@@ -1,31 +1,31 @@
 ---
-description: Security rules — auth, input validation, secrets, dependency scanning
+description: Regras de segurança — auth, validação de input, secrets, scan de dependências
 inclusion: auto
 ---
 
-# Security Steering
+# Diretrizes de Segurança
 
-## Authentication and authorization
-- All endpoints require authentication unless explicitly marked public
-- Enforce authorization server-side, never trust client-side checks alone
-- Never store passwords in plain text — use bcrypt or equivalent
+## Autenticação e autorização
+- Todos os endpoints requerem autenticação a menos que explicitamente marcados como públicos
+- Aplicar autorização no servidor, nunca confiar apenas em verificações do lado do cliente
+- Nunca armazenar senhas em texto plano — usar bcrypt ou equivalente
 
-## Input validation
-- Validate all inputs at the API boundary
-- Reject unexpected fields
-- Sanitize any input rendered in HTML (XSS prevention)
-- File uploads: validate MIME type, enforce size limits
+## Validação de input
+- Validar todos os inputs na fronteira da API
+- Rejeitar campos inesperados
+- Sanitizar qualquer input renderizado em HTML (prevenção de XSS)
+- Upload de arquivos: validar MIME type, aplicar limites de tamanho
 
-## SQL injection prevention
-- Use parameterized queries exclusively
-- Never use string concatenation in SQL queries
+## Prevenção de SQL injection
+- Usar queries parametrizadas exclusivamente
+- Nunca usar concatenação de strings em queries SQL
 
-## Secrets management
-- Never commit secrets, tokens, API keys, or credentials to git
-- Use environment variables or a secrets manager
-- If a secret was accidentally committed: rotate immediately
+## Gestão de secrets
+- Nunca commitar secrets, tokens, API keys ou credenciais no git
+- Usar variáveis de ambiente ou gerenciador de secrets
+- Se um secret foi commitado acidentalmente: rotacionar imediatamente
 
-## Dependency security
-- Run dependency vulnerability scanning in CI
-- Critical CVEs: patch within 7 days
-- High CVEs: patch within 30 days
+## Segurança de dependências
+- Rodar scan de vulnerabilidades de dependências no CI
+- CVEs críticas: corrigir em até 7 dias
+- CVEs altas: corrigir em até 30 dias

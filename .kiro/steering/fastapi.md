@@ -1,5 +1,5 @@
 ---
-description: Python FastAPI specific patterns and conventions
+description: Padrões e convenções específicas do Python FastAPI
 inclusion: auto
 ---
 
@@ -7,20 +7,20 @@ inclusion: auto
 
 ## Stack
 - Python 3.11+, FastAPI, Pydantic v2, SQLAlchemy 2.x async, Alembic
-- uvicorn for ASGI, httpx for HTTP client, structlog for logging
+- uvicorn para ASGI, httpx para cliente HTTP, structlog para logging
 
-## Conventions
-- Type hints on all function signatures — no `Any` unless truly necessary
-- `str | None` not `Optional[str]` (Python 3.10+ syntax)
-- `async def` for I/O-bound handlers, `def` for CPU-bound
-- `Depends()` for dependency injection — never instantiate services in handlers
-- Separate Pydantic schemas for request and response: `CreateUserRequest`, `UserResponse`
-- `pydantic-settings` for typed environment config
+## Convenções
+- Type hints em todas as assinaturas de função — sem `Any` a menos que realmente necessário
+- `str | None` e não `Optional[str]` (sintaxe Python 3.10+)
+- `async def` para handlers I/O-bound, `def` para CPU-bound
+- `Depends()` para injeção de dependência — nunca instanciar serviços dentro dos handlers
+- Schemas Pydantic separados para request e response: `CreateUserRequest`, `UserResponse`
+- `pydantic-settings` para configuração tipada de ambiente
 
-## Testing
-- `pytest` + `pytest-asyncio` + `httpx.AsyncClient` for API tests
-- Testcontainers for database tests (same PostgreSQL version as production)
-- Alembic migrations run in test setup
+## Testes
+- `pytest` + `pytest-asyncio` + `httpx.AsyncClient` para testes de API
+- Testcontainers para testes de banco (mesma versão PostgreSQL da produção)
+- Migrações Alembic rodam no setup dos testes
 
 ## Feedback loops
 ```bash
@@ -30,7 +30,7 @@ ruff check src/
 ruff format --check src/
 ```
 
-## Security
-- `Depends()` for auth injection — never check auth inside handler body
-- CORS: configure in `main.py`, never `allow_origins=["*"]` in production
-- Disable `/docs` and `/redoc` in production or secure behind auth
+## Segurança
+- `Depends()` para injeção de auth — nunca verificar auth dentro do corpo do handler
+- CORS: configurar em `main.py`, nunca `allow_origins=["*"]` em produção
+- Desabilitar `/docs` e `/redoc` em produção ou proteger com autenticação

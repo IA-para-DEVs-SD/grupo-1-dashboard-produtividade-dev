@@ -28,10 +28,10 @@ def get_github_config():
 @router.post("/settings/github")
 def save_github_config(config: GitHubConfig):
     import re
-    # Validate token format
-    if config.token and not re.match(r"^gh[ps]_[a-zA-Z0-9]{36,}$", config.token):
+    # Validate token format (ghp_, ghs_, gho_, ghu_, github_pat_)
+    if config.token and not re.match(r"^(gh[psou]_|github_pat_)[a-zA-Z0-9_]{20,}$", config.token):
         from fastapi import HTTPException
-        raise HTTPException(400, "Token inválido. Use formato ghp_xxx ou ghs_xxx")
+        raise HTTPException(400, "Token inválido. Use formato ghp_xxx, ghs_xxx ou github_pat_xxx")
     
     settings.github_token = config.token
     settings.github_username = config.username

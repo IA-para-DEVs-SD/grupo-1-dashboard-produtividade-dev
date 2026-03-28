@@ -240,32 +240,49 @@ dashboard-produtividade-dev/
 - Token GitHub com escopo `read:user` e `repo`
 - [Ollama](https://ollama.ai) instalado localmente (para modo dev)
 
+### Execução Rápida (3 terminais)
+
+| Terminal | Comando |
+|----------|---------|
+| 1 - LLM | `ollama serve` |
+| 2 - Backend | `cd backend && uv run uvicorn src.main:app --host 0.0.0.0 --port 8000` |
+| 3 - Frontend | `cd frontend && npm run dev -- --host 0.0.0.0 --port 5173` |
+
+Acesse: **http://localhost:5173**
+
+### Ollama (LLM local)
+
+```bash
+# Instalar Ollama
+curl -fsSL https://ollama.ai/install.sh | sh
+
+# Baixar modelo (primeira vez)
+ollama pull llama3.1
+
+# Iniciar servidor LLM
+ollama serve
+```
+
 ### Backend
 
 ```bash
-# Clone o repositório
-git clone https://github.com/IA-para-DEVs-SD/dashboard-produtividade-dev.git
-cd dashboard-produtividade-dev/backend
+cd backend
 
-# Crie e ative o ambiente virtual
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-
-# Instale dependências
-pip install -r requirements.txt
+# Instale dependências (usa uv, não pip)
+uv sync
 
 # Configure variáveis de ambiente
 cp .env.example .env
-# Edite o .env com seu GITHUB_TOKEN e configurações LLM
+# Edite o .env com seu GITHUB_TOKEN
 
 # Inicie o servidor
-uvicorn src.main:app --reload
+uv run uvicorn src.main:app --host 0.0.0.0 --port 8000
 ```
 
 ### Frontend
 
 ```bash
-cd ../frontend
+cd frontend
 
 # Instale dependências
 npm install
@@ -274,7 +291,7 @@ npm install
 cp .env.example .env
 
 # Inicie o servidor de desenvolvimento
-npm run dev
+npm run dev -- --host 0.0.0.0 --port 5173
 ```
 
 ---

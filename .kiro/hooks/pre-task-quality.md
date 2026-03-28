@@ -1,18 +1,18 @@
 ---
-description: Check preconditions before starting a spec task
+description: Verificar pré-condições antes de iniciar uma tarefa de spec
 event: on_task_start
 ---
 
-## Conditions
+## Condições
 
-- A task from a spec in `.kiro/specs/` is about to be executed
-- The task file (tasks.md) exists and has structured task entries
+- Uma tarefa de uma spec em `.kiro/specs/` está prestes a ser executada
+- O arquivo de tarefas (tasks.md) existe e tem entradas estruturadas
 
-## Instructions
+## Instruções
 
-- Read the current task entry from tasks.md
-- Verify the task has done criteria defined — if missing, ask the user to define them before proceeding
-- Check if the task has dependencies on other tasks — if those tasks are not marked complete, warn the user
-- If the task mentions database changes (migration, ALTER, new table), verify the rollback strategy is documented in design.md
-- If the task touches files in shared code paths (service/, model/, repository/), flag it as higher risk and remind the user to check what else depends on those files
-- Read `.kiro/state/RISKS.md` and display any open risks relevant to this task's scope
+- Ler a entrada da tarefa atual em tasks.md
+- Verificar se a tarefa tem critérios de conclusão definidos — se ausentes, pedir ao usuário para defini-los antes de prosseguir
+- Verificar se a tarefa tem dependências de outras tarefas — se essas tarefas não estão marcadas como completas, alertar o usuário
+- Se a tarefa menciona mudanças de banco (migration, ALTER, nova tabela), verificar se a estratégia de rollback está documentada em design.md
+- Se a tarefa toca arquivos em caminhos de código compartilhado (service/, model/, repository/), sinalizar como maior risco e lembrar o usuário de verificar o que mais depende desses arquivos
+- Ler `.kiro/state/RISKS.md` e exibir quaisquer riscos abertos relevantes para o escopo desta tarefa

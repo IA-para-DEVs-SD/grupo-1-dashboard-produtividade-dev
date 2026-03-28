@@ -1,30 +1,30 @@
 ---
-description: Check critical file changes against coding and security standards
+description: Verificar mudanças em arquivos críticos contra padrões de código e segurança
 event: on_file_save
 ---
 
-## Conditions
+## Condições
 
-- The saved file matches any of these paths:
-  - `**/migration/**` or `**/db/**` (database migrations)
-  - `**/security/**` or `**/auth/**` (security-related code)
-  - `**/model/**` or `**/entity/**` (domain models / JPA entities)
-  - `**/application*.yml` or `**/application*.properties` (configuration)
+- O arquivo salvo corresponde a qualquer um destes caminhos:
+  - `**/migration/**` ou `**/db/**` (migrações de banco)
+  - `**/security/**` ou `**/auth/**` (código relacionado a segurança)
+  - `**/model/**` ou `**/entity/**` (modelos de domínio / entidades JPA)
+  - `**/application*.yml` ou `**/application*.properties` (configuração)
 
-## Instructions
+## Instruções
 
-- For database migration files:
-  - Warn if the migration contains `DROP TABLE` or `DROP COLUMN` without a comment explaining why
-  - Warn if `CREATE INDEX` is used without `CONCURRENTLY` on a table likely to be large
-  - Warn if a `NOT NULL` column is added without a `DEFAULT` value
-- For security/auth files:
-  - Flag any hardcoded strings that look like credentials, tokens, or API keys
-  - Verify password handling uses bcrypt or a strong hashing algorithm, not MD5/SHA-1
-  - Flag `@PermitAll` or public endpoint annotations — confirm they are intentional
-- For model/entity files:
-  - Warn if a field is removed (could break existing queries or API contracts)
-  - Warn if a field type is changed (could require data migration)
-- For configuration files:
-  - Flag any values that look like secrets (passwords, keys, tokens) — these should be environment variables
-  - Warn if database connection pool size is changed
-- Keep warnings concise — one line per issue, with the file path and line number when possible
+- Para arquivos de migração de banco:
+  - Alertar se a migração contém `DROP TABLE` ou `DROP COLUMN` sem um comentário explicando o motivo
+  - Alertar se `CREATE INDEX` é usado sem `CONCURRENTLY` em uma tabela que provavelmente é grande
+  - Alertar se uma coluna `NOT NULL` é adicionada sem um valor `DEFAULT`
+- Para arquivos de segurança/auth:
+  - Sinalizar qualquer string hardcoded que pareça credencial, token ou API key
+  - Verificar se o tratamento de senha usa bcrypt ou algoritmo de hash forte, não MD5/SHA-1
+  - Sinalizar anotações `@PermitAll` ou endpoint público — confirmar que são intencionais
+- Para arquivos de model/entity:
+  - Alertar se um campo é removido (pode quebrar queries existentes ou contratos de API)
+  - Alertar se o tipo de um campo é alterado (pode requerer migração de dados)
+- Para arquivos de configuração:
+  - Sinalizar qualquer valor que pareça secret (senhas, chaves, tokens) — devem ser variáveis de ambiente
+  - Alertar se o tamanho do pool de conexões do banco é alterado
+- Manter alertas concisos — uma linha por problema, com caminho do arquivo e número da linha quando possível
