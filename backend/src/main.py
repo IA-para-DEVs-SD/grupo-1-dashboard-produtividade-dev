@@ -57,3 +57,9 @@ app.include_router(insights.router)
 app.include_router(metrics.router)
 app.include_router(export.router)
 app.include_router(settings_routes.router)
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("src.main:app", host="0.0.0.0", port=8000, reload=True)

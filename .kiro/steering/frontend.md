@@ -18,11 +18,17 @@ fileMatchPattern: "frontend/**"
 frontend/
 ├── src/
 │   ├── __init__.py
-│   └── app.py            # App Streamlit principal
+│   ├── app.py              # App Streamlit principal (navegação)
+│   ├── api_client.py       # Cliente HTTP para o backend
+│   └── pages/
+│       ├── __init__.py
+│       ├── dashboard.py    # KPIs + gráficos
+│       ├── chat.py         # Chat RAG
+│       └── settings.py     # Configurações GitHub/LLM/Ingestão
 ├── tests/
 ├── docs/
 ├── pyproject.toml
-└── .python-version       # 3.12
+└── .python-version         # 3.12
 ```
 
 ## Gerenciamento de Dependências
