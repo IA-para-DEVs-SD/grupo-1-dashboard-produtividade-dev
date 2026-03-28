@@ -109,17 +109,43 @@ dashboard-produtividade-dev/
 - Token GitHub com escopo `read:user` e `repo`
 - [Ollama](https://ollama.com/) instalado localmente (modo dev)
 
+### Execução Rápida (3 terminais)
+
+| Terminal | Comando |
+|----------|---------|
+| 1 - LLM | `ollama serve` |
+| 2 - Backend | `cd backend && uv run uvicorn src.main:app --host 0.0.0.0 --port 8000` |
+| 3 - Frontend | `cd frontend && npm run dev -- --host 0.0.0.0 --port 5173` |
+
+Acesse: **http://localhost:5173**
+
+### Ollama (LLM local)
+
+```bash
+# Instalar Ollama
+curl -fsSL https://ollama.ai/install.sh | sh
+
+# Baixar modelo (primeira vez)
+ollama pull llama3.1
+
+# Iniciar servidor LLM
+ollama serve
+```
+
 ### Backend
 
 ```bash
-git clone https://github.com/IA-para-DEVs-SD/dashboard-produtividade-dev.git
-cd dashboard-produtividade-dev/backend
+cd backend
 
-cp .env.example .env
-# edite o .env com seu GITHUB_TOKEN e configurações LLM
-
+# Instale dependências (usa uv, não pip)
 uv sync
-uv run python -m src.main
+
+# Configure variáveis de ambiente
+cp .env.example .env
+# Edite o .env com seu GITHUB_TOKEN
+
+# Inicie o servidor
+uv run uvicorn src.main:app --host 0.0.0.0 --port 8000
 ```
 
 O backend estará disponível em `http://localhost:8000` (ou na porta definida em `APP_PORT` no `.env`).
@@ -131,8 +157,8 @@ cd frontend
 
 cp .env.example .env
 
-uv sync
-uv run streamlit run src/app.py
+# Inicie o servidor de desenvolvimento
+npm run dev -- --host 0.0.0.0 --port 5173
 ```
 
 O frontend estará disponível em `http://localhost:8501`.
