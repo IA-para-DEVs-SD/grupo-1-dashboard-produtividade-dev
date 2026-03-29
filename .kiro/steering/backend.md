@@ -9,14 +9,14 @@ fileMatchPattern: "backend/**"
 
 - Framework: FastAPI + Uvicorn
 - ORM: SQLModel (SQLAlchemy + Pydantic unificados)
-- Banco relacional: SQLite via `sqlite-utils` e SQLModel
+- Banco relacional: SQLite via SQLModel
 - Banco vetorial: ChromaDB (modo embedded, sem servidor)
-- RAG: LangChain + aisuite (provider-agnostic para LLM)
-- Embeddings: `intfloat/multilingual-e5-large` via HuggingFace
-- LLM: Ollama (Llama 3.1 8B) local
-- Logging: Loguru (configurado via LOG_LEVEL do .env)
-- Variáveis de ambiente: python-dotenv
-- Porta configurável via APP_PORT no .env (default 8000)
+- RAG: pipeline customizado com aisuite (provider-agnostic para LLM)
+- Embeddings: `all-MiniLM-L6-v2` via sentence-transformers (384D)
+- LLM: Ollama (`llama3.1`) local ou OpenAI (`gpt-4o-mini`) via aisuite
+- Rate limiting: slowapi
+- Logging: loguru com correlation IDs
+- Scheduler: APScheduler (ingestão a cada 12h)
 
 ## Estrutura de Pastas
 
@@ -24,35 +24,22 @@ fileMatchPattern: "backend/**"
 backend/
 ├── src/
 │   ├── __init__.py
-│   ├── main.py           # App FastAPI, startup, health check
-│   ├── database.py       # Engine SQLModel, get_session
-│   └── models/           # Entidades SQLModel (table=True)
-│       └── __init__.py   # Exporta todos os modelos
+│   ├── main.py             # App FastAPI, CORS, rate limiting, scheduler
+│   ├── config.py           # Pydantic Settings (.env)
+│   ├── database.py         # Engine SQLModel, get_session
+│   ├── logging_config.py   # Loguru + correlation IDs
+│   ├── github/             # Coleta via GraphQL
+│   ├── rag/                # Embeddings, vector store, LLM, pipeline
+│   ├── routes/             # Endpoints REST
+│   └── services/           # Ingestão + métricas
 ├── tests/
-├── docs/
 ├── pyproject.toml
-└── .python-version       # 3.12
+└── .python-version         # 3.12
 ```
-
-## Banco de Dados — SQLModel
-
-- Criar modelos em `backend/src/models/` (um arquivo por domínio)
-- Exportar no `backend/src/models/__init__.py`
-- Importar no `main.py` para registrar no metadata
-- Sempre criar schemas separados: `ModelCreate` (request) e `ModelRead` (response) sem `table=True`
-- Usar `Field(primary_key=True)` com `default=None` para autoincrement
-- Usar `Field(index=True)` em campos usados em buscas frequentes
-- Tabelas criadas automaticamente no startup via `create_db_and_tables()`
-
-## ChromaDB
-
-- Modo embedded (biblioteca Python, sem servidor Docker)
-- Dados salvos em `CHROMADB_PATH` (default `./chroma_data`)
-- Usado para armazenar embeddings de commits, PRs e issues
 
 ## Gerenciamento de Dependências
 
-- SEMPRE usar `uv add` para adicionar dependências
+- SEMPRE usar `uv add` para adicionar dependências de produção
 - SEMPRE usar `uv add --dev` para dependências de desenvolvimento
 - SEMPRE usar `uv run` para executar código
 - SEMPRE commitar `uv.lock`
@@ -63,23 +50,29 @@ backend/
 ```bash
 cd backend
 cp .env.example .env
+# Editar .env com GITHUB_TOKEN e GITHUB_USERNAME
 uv sync
-uv run python -m src.main
+uv run uvicorn src.main:app --host 0.0.0.0 --port 8000
 ```
 
 ## Variáveis de Ambiente (`backend/.env`)
 
 ```env
-GITHUB_TOKEN=seu_token_aqui
-GITHUB_USERNAME=seu_usuario_aqui
-GITHUB_GRAPHQL_URL=https://api.github.com/graphql
-CHROMADB_PATH=./chroma_data
+GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
+GITHUB_USERNAME=seu_usuario
+
+LLM_PROVIDER=ollama
+LLM_MODEL=llama3.1
+OPENAI_API_KEY=
+
+CHROMA_PATH=./data/chroma
+CHROMA_COLLECTION=github_activity
+
 SQLITE_DB_PATH=./data.db
-LOG_LEVEL=DEBUG
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=llama3.1:8b
-EMBEDDING_MODEL=intfloat/multilingual-e5-large
-APP_PORT=8000
+
+INGESTION_DAYS_BACK=90
+
+CORS_ORIGINS=["http://localhost:8501"]
 ```
 
 ## Testes
