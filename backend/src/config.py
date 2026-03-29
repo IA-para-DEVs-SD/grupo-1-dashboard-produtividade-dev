@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     chroma_path: str = "./data/chroma"
     chroma_collection: str = "github_activity"
 
+    sqlite_db_path: str = "./data.db"
+
     ingestion_days_back: int = 90
 
     cors_origins: list[str] = ["http://localhost:8501"]
