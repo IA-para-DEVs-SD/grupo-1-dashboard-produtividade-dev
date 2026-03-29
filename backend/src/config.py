@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     ingestion_days_back: int = 90
 
-    cors_origins: list[str] = ["http://localhost:5173"]
+    cors_origins: list[str] = ["http://localhost:8501"]
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 

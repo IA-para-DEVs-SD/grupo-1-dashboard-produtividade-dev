@@ -6,36 +6,32 @@ inclusion: always
 # Diretrizes Técnicas
 
 ## Linguagem e runtime
-- Python 3.11+ (backend)
-- Node.js 18+ / TypeScript (frontend)
+- Python 3.12 (backend e frontend)
 
 ## Frameworks
-- **Backend**: FastAPI 0.110+ (API REST async + cron de ingestão)
-- **Frontend**: React 18+ com Vite
-- **Gráficos**: Chart.js
+- **Backend**: FastAPI 0.115+ (API REST async + cron de ingestão)
+- **Frontend**: Streamlit 1.40+
+- **Gráficos**: Plotly
+- **Rate limiting**: slowapi
 - **Orquestração LLM**: aisuite (provider-agnostic — Ollama / OpenAI)
-- **RAG**: LangChain (opcional) ou pipeline customizado
-- **Logging**: loguru
+- **RAG**: pipeline customizado
+- **Logging**: loguru + correlation IDs
 
 ## Banco de dados
-- **ChromaDB** — vector store para embeddings + metadados
-- **SQLite** — persistência leve para dados não-vetoriais
-- Migrações gerenciadas por Alembic (se necessário SQL)
-- Todas as alterações DDL passam por scripts de migração
+- **ChromaDB** — vector store para embeddings + metadados (modo embedded, sem servidor)
+- **SQLite** — persistência leve para dados não-vetoriais via SQLModel
 
 ## Embeddings e LLM
-- **Embeddings**: HuggingFace `sentence-transformers/all-MiniLM-L6-v2` (384D)
+- **Embeddings**: HuggingFace `all-MiniLM-L6-v2` (384D) via sentence-transformers
 - **LLM dev**: Ollama com `llama3.1` (local, custo zero)
 - **LLM prod**: OpenAI `gpt-4o-mini` via aisuite
 - **Busca vetorial**: cosine similarity, top-5 chunks
 
 ## Build e empacotamento
-- **Backend**: `uv` (gerenciador obrigatório — ver uv_kiro_guidelines.md)
+- **Backend e Frontend**: `uv` (gerenciador obrigatório)
   - `uv sync` para instalar dependências
   - `uv run` para executar qualquer comando Python
   - Dependências declaradas em `pyproject.toml`
-- **Frontend**: npm
-  - `npm install` + `npm run dev` / `npm run build`
 - Fixar todas as versões de dependências explicitamente
 - Builds de CI devem ser reproduzíveis
 
@@ -48,7 +44,7 @@ inclusion: always
 
 ## Monitoramento
 - Logging estruturado com loguru + correlation IDs
-- Endpoint de health check
+- Endpoint de health check (`/health` e `/health/detailed`)
 - Alertas em picos de taxa de erro e degradação de latência
 
 ## Fonte de dados
