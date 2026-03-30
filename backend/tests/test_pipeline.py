@@ -5,7 +5,7 @@ query com JSON inválido, formatação de evidence/recommendation não-string.
 """
 
 import json
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 

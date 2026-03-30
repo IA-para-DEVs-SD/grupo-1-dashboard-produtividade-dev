@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Ruff Lint Check",
+  "description": "Valida lint com ruff nos arquivos Python editados. Identifica erros e aplica correções automáticas com --fix quando possível.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*.py"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Um arquivo Python foi editado. Determine se o arquivo pertence ao backend/ ou frontend/ pelo seu caminho. Rode `uv run ruff check --fix` a partir do diretório correspondente (cwd: backend ou frontend) para aplicar correções automáticas de lint. Em seguida rode `uv run ruff check` (sem --fix) para verificar se restam erros que precisam de correção manual. Se houver erros remanescentes, corrija-os. Não use caminhos absolutos nem referências a .venv/Scripts — use sempre `uv run`."
+  }
+}
