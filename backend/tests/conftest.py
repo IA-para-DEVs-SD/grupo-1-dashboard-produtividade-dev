@@ -19,9 +19,7 @@ sys.modules.setdefault("sentence_transformers", _mock_st)
 if "openai" not in sys.modules:
     sys.modules["openai"] = MagicMock()
 
-# Agora podemos importar os módulos do src com segurança
-# e resetar singletons entre testes
-import pytest
+import pytest  # noqa: E402
 
 
 @pytest.fixture(autouse=True)

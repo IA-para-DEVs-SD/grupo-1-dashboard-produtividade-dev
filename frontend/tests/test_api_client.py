@@ -6,13 +6,10 @@ tratamento de erros HTTP, e que todas as funções chamam os endpoints corretos.
 
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from src.api_client import (
     get_export_url,
     get_github_status,
     get_ingest_status,
-    get_llm_config,
     get_metrics,
     get_metrics_weekly,
     post_insight,

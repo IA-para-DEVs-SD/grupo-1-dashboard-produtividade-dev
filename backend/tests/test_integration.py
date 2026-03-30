@@ -6,7 +6,6 @@ rotas → serviços → modelos → respostas HTTP.
 Mínimo 5 testes de integração que validam regras reais do sistema.
 """
 
-import json
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
