@@ -7,6 +7,7 @@ class Settings(BaseSettings):
 
     llm_provider: str = "ollama"
     llm_model: str = "llama3.1"
+    ollama_host: str = "http://localhost:11434"
     openai_api_key: str = ""
 
     chroma_path: str = "./data/chroma"
