@@ -1,0 +1,59 @@
+services:
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+
+  ollama-pull:
+    image: ollama/ollama
+    depends_on:
+      - ollama
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    entrypoint: >
+      sh -c "
+        until ollama list >/dev/null 2>&1; do
+          echo 'Aguardando Ollama...'
+          sleep 2
+        done
+        echo 'Verificando modelo llama3.1...'
+        ollama pull llama3.1
+        echo 'Modelo pronto.'
+      "
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    volumes:
+      - ./backend/data:/app/data
+    depends_on:
+      ollama-pull:
+        condition: service_completed_successfully
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8501:8501"
+    env_file:
+      - ./frontend/.env
+    environment:
+      - BACKEND_API_URL=http://backend:8000
+      - BACKEND_PUBLIC_URL=http://localhost:8000
+    depends_on:
+      - backend
+
+volumes:
+  ollama_data:
