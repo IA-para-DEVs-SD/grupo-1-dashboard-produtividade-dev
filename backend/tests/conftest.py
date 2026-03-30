@@ -24,21 +24,23 @@ import pytest  # noqa: E402
 
 @pytest.fixture(autouse=True)
 def _reset_singletons():
-    """Reseta singletons de EmbeddingService, VectorStore e LLMClient."""
+    """Reseta singletons e caches entre testes."""
     yield
-    # Reset após cada teste
-    try:
-        from src.rag.embeddings import EmbeddingService
-        EmbeddingService._instance = None
-    except Exception:
-        pass
-    try:
-        from src.rag.vector_store import VectorStore
-        VectorStore._instance = None
-    except Exception:
-        pass
+    # Reset LLMClient singleton
     try:
         from src.rag.llm_client import LLMClient
-        LLMClient._instance = None
+        LLMClient.reset()
+    except Exception:
+        pass
+    # Limpa lru_cache do modelo de embeddings
+    try:
+        from src.rag.embeddings import _get_model
+        _get_model.cache_clear()
+    except Exception:
+        pass
+    # Limpa lru_cache do cliente ChromaDB
+    try:
+        from src.rag.vector_store import _get_client
+        _get_client.cache_clear()
     except Exception:
         pass

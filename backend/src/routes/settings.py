@@ -76,6 +76,6 @@ def save_llm_config(config: LLMConfig):
     # Reset LLM client singleton to pick up new config
     from src.rag.llm_client import LLMClient
 
-    LLMClient._instance = None
+    LLMClient.reset()
     return {"status": "ok"}
 

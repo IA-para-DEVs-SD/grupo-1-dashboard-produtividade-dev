@@ -209,6 +209,8 @@ STREAMLIT_SERVER_PORT=8501
 ## Documentações
 
 - [Fluxograma do projeto](fluxograma_dashboard_produtividade.md)
+- [Decisões de arquitetura](docs/decisoes-arquitetura.md)
+- [Rubrica de qualidade](docs/rubrica-qualidade.md)
 - [Documento de arquitetura](.kiro/docs-iniciais/dashboard-de-produtividade-dev.md)
 - [Diretrizes GitFlow](.kiro/docs-iniciais/gitflow_kiro_guidelines.md)
 - [Diretrizes uv](.kiro/docs-iniciais/uv_kiro_guidelines.md)

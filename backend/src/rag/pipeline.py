@@ -1,3 +1,5 @@
+"""Pipeline RAG — busca vetorial + LLM para gerar insights de produtividade."""
+
 import json
 
 from src.rag.embeddings import EmbeddingService
@@ -18,6 +20,8 @@ Responda APENAS em JSON válido com este formato (sem markdown, sem ```):
 
 
 class RAGPipeline:
+    """Pipeline completo: embed query → busca vetorial → prompt LLM → insight."""
+
     def __init__(self):
         self.embedder = EmbeddingService()
         self.store = VectorStore()

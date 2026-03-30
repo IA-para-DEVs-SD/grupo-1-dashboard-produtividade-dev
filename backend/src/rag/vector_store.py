@@ -1,5 +1,8 @@
+"""Vector store — interface com ChromaDB para armazenamento e busca vetorial."""
+
 from __future__ import annotations
 
+from functools import lru_cache
 from typing import TYPE_CHECKING
 
 import chromadb
@@ -9,26 +12,17 @@ from src.config import settings
 if TYPE_CHECKING:
     from chromadb.api import ClientAPI
 
-_client: ClientAPI | None = None
 
-
+@lru_cache(maxsize=1)
 def _get_client() -> ClientAPI:
-    global _client
-    if _client is None:
-        _client = chromadb.PersistentClient(path=settings.chroma_path)
-    return _client
+    """Retorna cliente ChromaDB persistente (singleton via lru_cache)."""
+    return chromadb.PersistentClient(path=settings.chroma_path)
 
 
 class VectorStore:
-    _instance: VectorStore | None = None
+    """Interface para operações no ChromaDB."""
 
-    def __new__(cls) -> VectorStore:
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-            cls._instance._init_collection()
-        return cls._instance
-
-    def _init_collection(self):
+    def __init__(self) -> None:
         self.collection = _get_client().get_or_create_collection(
             name=settings.chroma_collection,
             metadata={"hnsw:space": "cosine"},
@@ -40,7 +34,8 @@ class VectorStore:
         embeddings: list[list[float]],
         documents: list[str],
         metadatas: list[dict] | None = None,
-    ):
+    ) -> None:
+        """Insere ou atualiza documentos no ChromaDB."""
         self.collection.upsert(
             ids=ids,
             embeddings=embeddings,
@@ -49,6 +44,7 @@ class VectorStore:
         )
 
     def query(self, embedding: list[float], top_k: int = 5) -> list[dict]:
+        """Busca os top-K documentos mais similares ao embedding."""
         results = self.collection.query(
             query_embeddings=[embedding],
             n_results=top_k,
@@ -59,10 +55,15 @@ class VectorStore:
             items.append({
                 "id": results["ids"][0][i],
                 "document": results["documents"][0][i],
-                "distance": results["distances"][0][i] if results.get("distances") else None,
-                "metadata": results["metadatas"][0][i] if results.get("metadatas") else {},
+                "distance": (
+                    results["distances"][0][i] if results.get("distances") else None
+                ),
+                "metadata": (
+                    results["metadatas"][0][i] if results.get("metadatas") else {}
+                ),
             })
         return items
 
     def count(self) -> int:
+        """Retorna quantidade de documentos na collection."""
         return self.collection.count()

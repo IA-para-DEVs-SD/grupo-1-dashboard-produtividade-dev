@@ -34,4 +34,4 @@ jobs:
         run: uv run pip-audit
 
       - name: Test
-        run: uv run pytest -q
+        run: uv run pytest -q --cov=src --cov-report=term-missing
