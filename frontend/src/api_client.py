@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_URL = os.getenv("BACKEND_API_URL", "http://localhost:8000")
+PUBLIC_URL = os.getenv("BACKEND_PUBLIC_URL", BASE_URL)
 
 
 def _get(path: str, params: dict | None = None):
@@ -104,4 +105,4 @@ def get_export_url(fmt: str, date_from: str | None = None, date_to: str | None =
     if date_to:
         params.append(f"to={date_to}")
     qs = f"?{'&'.join(params)}" if params else ""
-    return f"{BASE_URL}/export/{fmt}{qs}"
+    return f"{PUBLIC_URL}/export/{fmt}{qs}"

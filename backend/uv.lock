@@ -381,6 +381,7 @@ dependencies = [
     { name = "loguru" },
     { name = "pydantic-settings" },
     { name = "sentence-transformers" },
+    { name = "slowapi" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
@@ -390,7 +391,6 @@ dev = [
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "ruff" },
-    { name = "slowapi" },
 ]
 
 [package.metadata]
@@ -404,6 +404,7 @@ requires-dist = [
     { name = "loguru", specifier = ">=0.7.0" },
     { name = "pydantic-settings", specifier = ">=2.7.0" },
     { name = "sentence-transformers", specifier = ">=3.4.0" },
+    { name = "slowapi", specifier = ">=0.1.9" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.34.0" },
 ]
 
@@ -413,7 +414,6 @@ dev = [
     { name = "pytest", specifier = ">=8.0.0" },
     { name = "pytest-asyncio", specifier = ">=0.25.0" },
     { name = "ruff", specifier = ">=0.9.0" },
-    { name = "slowapi", specifier = ">=0.1.9" },
 ]
 
 [[package]]
