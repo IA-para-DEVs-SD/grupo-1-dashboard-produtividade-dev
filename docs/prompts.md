@@ -80,3 +80,52 @@ Olá, crie uma pasta docs no diretório e um arquivo em .md e registre todos os 
 ```
 
 Resultado: criação deste arquivo em `docs/prompts.md`.
+
+---
+
+## 5. Criação e correção de testes unitários e de integração
+
+```
+atue como um dev senior especialista em python e testes
+vamos corrigir os testes unitários que estão quebrados
+criar novos testes para o front e backend
+criar testes de integração, no mínimo 5 testes de integração
+os testes de fato tem que validar as regras do sistema, não ser somente testes genéricos
+após a conclusão, adicione nosso prompt como documentação no arquivo loading dentro de docs
+```
+
+Resultado: branch `feature/criacao_testes` criada a partir de `develop`.
+
+**Correções realizadas:**
+- `backend/tests/conftest.py` — criado para mockar `sentence-transformers` e `openai` no nível de `sys.modules`, evitando erros de import em ambientes sem essas dependências pesadas. Reseta singletons entre testes.
+- `backend/tests/test_main.py` — corrigido para mockar `start_scheduler` e `_get_model` antes de importar o app FastAPI.
+- `backend/tests/test_pipeline.py` — reescrito para usar fixture simples com `RAGPipeline.__new__` e mocks diretos.
+
+**Novos testes unitários — Backend:**
+
+| Arquivo | Módulo testado | Regras validadas |
+|---------|---------------|------------------|
+| `test_config.py` | `src/config.py` | Defaults do Settings (ollama, llama3.1, 90 dias, CORS 8501) |
+| `test_collector.py` | `src/github/collector.py` | Auth com bearer token, check_connection, parsing GraphQL, resiliência a falhas parciais |
+| `test_ingestion.py` | `src/services/ingestion.py` | Status tracking, retorno 0 sem token, fluxo completo de ingestão, scheduler 12h |
+| `test_metrics_service.py` | `src/services/metrics.py` | KPIs (commits, PRs merged, hot repos, tempo merge), cache em memória, erro sem token |
+| `test_settings_routes.py` | `src/routes/settings.py` | Validação formato token GitHub (ghp_/ghs_/github_pat_), rejeição de tokens inválidos, config LLM |
+
+**Novos testes unitários — Frontend:**
+
+| Arquivo | Módulo testado | Regras validadas |
+|---------|---------------|------------------|
+| `test_api_client.py` | `src/api_client.py` | URLs de export com/sem datas, endpoints GitHub/métricas/insights/LLM/ingestão, passagem de parâmetros |
+
+**Testes de integração — Backend:**
+
+| # | Classe | Fluxo testado |
+|---|--------|---------------|
+| 1 | `TestInsightsValidation` | POST /insights com query vazia → 400, sem campo query → 422 |
+| 2 | `TestInsightsPipelineIntegration` | POST /insights → RAGPipeline → Insight com todos os campos |
+| 3 | `TestExportCSVIntegration` | GET /export/csv → MetricsService → CSV com headers e dados |
+| 4 | `TestIngestTriggerIntegration` | POST /ingest → background task, GET /ingest/status → campos de monitoramento |
+| 5 | `TestMetricsEndpointIntegration` | GET /metrics → GitHubCollector (mock) → KPIs calculados |
+| 6 | `TestHealthDetailedIntegration` | GET /health/detailed → checks de api/chromadb/github/llm, status degraded vs ok |
+
+**Resultado final:** Backend: 77 testes passando. Frontend: 11 testes passando. Total: 88 testes.

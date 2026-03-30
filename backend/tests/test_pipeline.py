@@ -1,4 +1,9 @@
-"""Tests for RAG pipeline."""
+"""Testes unitários para o RAG pipeline.
+
+Valida: construção de prompt, query sem chunks, query com JSON válido,
+query com JSON inválido, formatação de evidence/recommendation não-string.
+"""
+
 import json
 from unittest.mock import MagicMock, patch
 
@@ -7,118 +12,81 @@ import pytest
 from src.rag.pipeline import RAGPipeline
 
 
-class TestRAGPipeline:
-    @patch("src.rag.pipeline.EmbeddingService")
-    @patch("src.rag.pipeline.VectorStore")
-    @patch("src.rag.pipeline.LLMClient")
-    def test_build_prompt(self, mock_llm, mock_store, mock_embed):
-        pipeline = RAGPipeline()
+@pytest.fixture()
+def pipeline():
+    """Cria RAGPipeline com todas as dependências mockadas."""
+    p = RAGPipeline.__new__(RAGPipeline)
+    p.embedder = MagicMock()
+    p.embedder.embed.return_value = [0.1] * 384
+    p.store = MagicMock()
+    p.llm = MagicMock()
+    return p
+
+
+class TestBuildPrompt:
+    def test_prompt_contains_chunks_and_query(self, pipeline):
         chunks = ["Commit abc: fix bug", "PR #1: add feature"]
         prompt = pipeline._build_prompt(chunks, "O que fiz hoje?")
         assert "Commit abc: fix bug" in prompt
         assert "PR #1: add feature" in prompt
         assert "O que fiz hoje?" in prompt
 
-    @patch("src.rag.pipeline.EmbeddingService")
-    @patch("src.rag.pipeline.VectorStore")
-    @patch("src.rag.pipeline.LLMClient")
+    def test_prompt_uses_template_format(self, pipeline):
+        prompt = pipeline._build_prompt(["chunk1"], "pergunta")
+        assert "JSON" in prompt
+        assert "summary" in prompt
+
+
+class TestQueryNoChunks:
     @pytest.mark.asyncio
-    async def test_query_no_chunks(self, mock_llm, mock_store, mock_embed):
-        mock_embed_instance = MagicMock()
-        mock_embed_instance.embed.return_value = [0.1] * 384
-        mock_embed.return_value = mock_embed_instance
-
-        mock_store_instance = MagicMock()
-        mock_store_instance.query.return_value = []
-        mock_store.return_value = mock_store_instance
-
-        pipeline = RAGPipeline()
+    async def test_returns_no_data_message(self, pipeline):
+        pipeline.store.query.return_value = []
         result = await pipeline.query("teste")
-
         assert "Sem dados suficientes" in result.summary
         assert "ingestão" in result.recommendation.lower()
 
-    @patch("src.rag.pipeline.EmbeddingService")
-    @patch("src.rag.pipeline.VectorStore")
-    @patch("src.rag.pipeline.LLMClient")
-    @pytest.mark.asyncio
-    async def test_query_with_valid_json(self, mock_llm, mock_store, mock_embed):
-        mock_embed_instance = MagicMock()
-        mock_embed_instance.embed.return_value = [0.1] * 384
-        mock_embed.return_value = mock_embed_instance
 
-        mock_store_instance = MagicMock()
-        mock_store_instance.query.return_value = [
+class TestQueryValidJson:
+    @pytest.mark.asyncio
+    async def test_parses_json_response(self, pipeline):
+        pipeline.store.query.return_value = [
             {"document": "Commit abc: fix bug", "distance": 0.1, "metadata": {}}
         ]
-        mock_store.return_value = mock_store_instance
-
-        mock_llm_instance = MagicMock()
-        mock_llm_instance.complete.return_value = json.dumps({
+        pipeline.llm.complete.return_value = json.dumps({
             "summary": "Você corrigiu um bug",
             "evidence": "Commit abc",
             "recommendation": "Continue assim",
         })
-        mock_llm.return_value = mock_llm_instance
-
-        pipeline = RAGPipeline()
         result = await pipeline.query("O que fiz?")
-
         assert result.summary == "Você corrigiu um bug"
         assert result.evidence == "Commit abc"
         assert result.recommendation == "Continue assim"
 
-    @patch("src.rag.pipeline.EmbeddingService")
-    @patch("src.rag.pipeline.VectorStore")
-    @patch("src.rag.pipeline.LLMClient")
-    @pytest.mark.asyncio
-    async def test_query_with_list_evidence(self, mock_llm, mock_store, mock_embed):
-        mock_embed_instance = MagicMock()
-        mock_embed_instance.embed.return_value = [0.1] * 384
-        mock_embed.return_value = mock_embed_instance
 
-        mock_store_instance = MagicMock()
-        mock_store_instance.query.return_value = [
+class TestQueryListEvidence:
+    @pytest.mark.asyncio
+    async def test_formats_list_evidence(self, pipeline):
+        pipeline.store.query.return_value = [
             {"document": "Commit abc", "distance": 0.1, "metadata": {}}
         ]
-        mock_store.return_value = mock_store_instance
-
-        mock_llm_instance = MagicMock()
-        mock_llm_instance.complete.return_value = json.dumps({
+        pipeline.llm.complete.return_value = json.dumps({
             "summary": "Resumo",
             "evidence": ["item1", "item2"],
             "recommendation": {"tip": "dica"},
         })
-        mock_llm.return_value = mock_llm_instance
-
-        pipeline = RAGPipeline()
         result = await pipeline.query("teste")
-
         assert "item1" in result.evidence
         assert "item2" in result.evidence
         assert "dica" in result.recommendation
 
-    @patch("src.rag.pipeline.EmbeddingService")
-    @patch("src.rag.pipeline.VectorStore")
-    @patch("src.rag.pipeline.LLMClient")
-    @pytest.mark.asyncio
-    async def test_query_invalid_json(self, mock_llm, mock_store, mock_embed):
-        mock_embed_instance = MagicMock()
-        mock_embed_instance.embed.return_value = [0.1] * 384
-        mock_embed.return_value = mock_embed_instance
 
-        mock_store_instance = MagicMock()
-        mock_store_instance.query.return_value = [
+class TestQueryInvalidJson:
+    @pytest.mark.asyncio
+    async def test_falls_back_to_raw_text(self, pipeline):
+        pipeline.store.query.return_value = [
             {"document": "Commit abc", "distance": 0.1, "metadata": {}}
         ]
-        mock_store.return_value = mock_store_instance
-
-        mock_llm_instance = MagicMock()
-        mock_llm_instance.complete.return_value = "Resposta em texto livre"
-        mock_llm.return_value = mock_llm_instance
-
-        pipeline = RAGPipeline()
+        pipeline.llm.complete.return_value = "Resposta em texto livre"
         result = await pipeline.query("teste")
-
         assert result.summary == "Resposta em texto livre"
         assert result.evidence == ""
