@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Ruff Lint Check",
+  "description": "Roda ruff check nos arquivos Python editados para garantir que o código segue PEP 8 antes de ser commitado. Valida tanto backend quanto frontend.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*.py"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "O arquivo Python foi editado. Rode `ruff check` no arquivo modificado para verificar se há erros de lint (imports não utilizados, E402, etc). Se houver erros, corrija-os automaticamente. Use o ruff do venv correspondente (backend/.venv/Scripts/ruff.exe ou frontend/.venv/Scripts/ruff.exe) dependendo do caminho do arquivo."
+  }
+}
