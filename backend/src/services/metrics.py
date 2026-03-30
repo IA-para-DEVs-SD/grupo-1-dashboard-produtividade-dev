@@ -1,3 +1,5 @@
+"""Serviço de métricas — cálculo de KPIs e dados semanais."""
+
 from collections import Counter
 from datetime import datetime, timedelta, timezone
 from typing import Any
@@ -11,6 +13,7 @@ CACHE_TTL = 60  # seconds
 
 
 def _get_cached(key: str) -> Any | None:
+    """Retorna valor do cache se ainda válido (dentro do TTL)."""
     if key in _cache:
         ts, data = _cache[key]
         if datetime.now().timestamp() - ts < CACHE_TTL:
@@ -19,12 +22,18 @@ def _get_cached(key: str) -> Any | None:
     return None
 
 
-def _set_cached(key: str, data: Any):
+def _set_cached(key: str, data: Any) -> None:
+    """Armazena valor no cache com timestamp atual."""
     _cache[key] = (datetime.now().timestamp(), data)
 
 
 class MetricsService:
-    async def calculate(self, from_date: str | None = None, to_date: str | None = None) -> dict:
+    """Serviço para cálculo de KPIs de produtividade a partir de dados GitHub."""
+
+    async def calculate(
+        self, from_date: str | None = None, to_date: str | None = None
+    ) -> dict:
+        """Calcula KPIs agregados (commits, PRs, issues, merge time, hot repos)."""
         cache_key = f"metrics:{from_date}:{to_date}"
         cached = _get_cached(cache_key)
         if cached:

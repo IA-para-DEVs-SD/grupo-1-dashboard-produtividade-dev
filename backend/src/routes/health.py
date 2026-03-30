@@ -1,3 +1,5 @@
+"""Rotas de health check — básico e detalhado."""
+
 import httpx
 from fastapi import APIRouter
 
@@ -8,13 +10,13 @@ router = APIRouter(tags=["health"])
 
 @router.get("/health")
 async def health():
-    """Basic health check."""
+    """Health check básico — retorna status ok."""
     return {"status": "ok"}
 
 
 @router.get("/health/detailed")
 async def health_detailed():
-    """Detailed health check for all services."""
+    """Health check detalhado — verifica API, ChromaDB, GitHub e LLM."""
     checks = {
         "api": "ok",
         "chromadb": await _check_chromadb(),
@@ -26,16 +28,18 @@ async def health_detailed():
 
 
 async def _check_chromadb() -> str:
+    """Verifica se o ChromaDB está acessível."""
     try:
         from src.rag.vector_store import VectorStore
         store = VectorStore()
         store.count()
         return "ok"
-    except Exception as e:
-        return f"error: {e}"
+    except Exception:
+        return "error: chromadb unavailable"
 
 
 async def _check_github() -> str:
+    """Verifica conexão com a API do GitHub."""
     if not settings.github_token:
         return "not_configured"
     try:
@@ -47,22 +51,25 @@ async def _check_github() -> str:
             )
             if resp.status_code == 200:
                 return "ok"
-            return f"error: {resp.status_code}"
-    except Exception as e:
-        return f"error: {e}"
+            return f"error: status {resp.status_code}"
+    except Exception:
+        return "error: github unreachable"
 
 
 async def _check_llm() -> str:
+    """Verifica se o provedor LLM está acessível."""
     if settings.llm_provider == "openai":
         if not settings.openai_api_key:
             return "not_configured"
-        return "ok"  # Can't easily test without making a call
+        return "ok"
     else:  # ollama
         try:
             async with httpx.AsyncClient() as client:
-                resp = await client.get("http://localhost:11434/api/tags", timeout=3)
+                resp = await client.get(
+                    f"{settings.ollama_host}/api/tags", timeout=3
+                )
                 if resp.status_code == 200:
                     return "ok"
-                return f"error: {resp.status_code}"
+                return f"error: status {resp.status_code}"
         except Exception:
             return "error: ollama not running"

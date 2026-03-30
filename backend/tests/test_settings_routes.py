@@ -35,7 +35,7 @@ class TestGitHubConfigValidation:
 
     def test_accepts_valid_ghp_token(self, client):
         """Regra: tokens ghp_ com 20+ chars são aceitos."""
-        with patch("src.routes.settings._save_to_env"):
+        with patch("src.routes.settings.save_to_env"):
             resp = client.post(
                 "/settings/github",
                 json={"token": "ghp_abcdefghijklmnopqrstuvwxyz", "username": "user"},
@@ -45,7 +45,7 @@ class TestGitHubConfigValidation:
 
     def test_accepts_valid_github_pat_token(self, client):
         """Regra: tokens github_pat_ são aceitos."""
-        with patch("src.routes.settings._save_to_env"):
+        with patch("src.routes.settings.save_to_env"):
             resp = client.post(
                 "/settings/github",
                 json={
@@ -76,7 +76,7 @@ class TestLLMConfig:
 
     def test_save_llm_config_resets_singleton(self, client):
         """Regra: trocar config LLM reseta o singleton para pegar nova config."""
-        with patch("src.routes.settings._save_to_env"):
+        with patch("src.routes.settings.save_to_env"):
             resp = client.post(
                 "/settings/llm",
                 json={"provider": "ollama", "model": "mistral", "api_key": ""},

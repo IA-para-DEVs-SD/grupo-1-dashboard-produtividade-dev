@@ -1,3 +1,5 @@
+"""Coletor de dados do GitHub via GraphQL API."""
+
 from datetime import datetime, timedelta, timezone
 
 import httpx
@@ -9,6 +11,8 @@ GRAPHQL_URL = "https://api.github.com/graphql"
 
 
 class GitHubCollector:
+    """Coleta commits, PRs e issues do GitHub via GraphQL API."""
+
     def __init__(self, token: str, days_back: int = 90):
         self.token = token
         self.days_back = days_back
@@ -18,6 +22,7 @@ class GitHubCollector:
         }
 
     async def _query(self, query: str, variables: dict | None = None) -> dict:
+        """Executa query GraphQL na API do GitHub."""
         async with httpx.AsyncClient(timeout=30) as client:
             resp = await client.post(
                 GRAPHQL_URL,
@@ -31,6 +36,7 @@ class GitHubCollector:
             return data.get("data", {})
 
     async def check_connection(self) -> dict:
+        """Verifica conexão com o GitHub e retorna login do usuário."""
         try:
             data = await self._query("query { viewer { login } }")
             login = data.get("viewer", {}).get("login", "")
@@ -39,6 +45,7 @@ class GitHubCollector:
             return {"connected": False, "error": str(e)}
 
     async def fetch_commits(self) -> list[Commit]:
+        """Busca commits dos últimos N dias via GraphQL com paginação."""
         since = datetime.now(timezone.utc) - timedelta(days=self.days_back)
         query = """
         query($since: GitTimestamp!, $repoCursor: String, $commitCursor: String) {
@@ -100,6 +107,7 @@ class GitHubCollector:
         return commits
 
     async def fetch_pull_requests(self) -> list[PullRequest]:
+        """Busca PRs dos últimos N dias via GraphQL com paginação."""
         since = datetime.now(timezone.utc) - timedelta(days=self.days_back)
         query = """
         query($cursor: String) {
@@ -143,6 +151,7 @@ class GitHubCollector:
         return prs
 
     async def fetch_issues(self) -> list[Issue]:
+        """Busca issues dos últimos N dias via GraphQL com paginação."""
         since = datetime.now(timezone.utc) - timedelta(days=self.days_back)
         query = """
         query($cursor: String) {

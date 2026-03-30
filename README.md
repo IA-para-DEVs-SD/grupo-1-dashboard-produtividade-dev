@@ -21,13 +21,14 @@ Dashboard inteligente que analisa produtividade de desenvolvedores a partir de d
 | Camada | Tecnologia |
 |--------|-----------|
 | Data Source | GitHub GraphQL API |
-| Backend | FastAPI + Uvicorn + LangChain |
-| Vector DB | ChromaDB |
-| Embeddings | HuggingFace (`intfloat/multilingual-e5-large`) |
+| Backend | FastAPI + Uvicorn |
+| Vector DB | ChromaDB (embedded) |
+| Embeddings | HuggingFace (`all-MiniLM-L6-v2`, 384D) |
 | LLM | aisuite (Ollama / OpenAI) |
 | Frontend | Streamlit + Plotly |
-| Banco de Dados | SQLite (`sqlite-utils`) |
-| Logging | Loguru |
+| Banco de Dados | SQLite via SQLModel |
+| Logging | Loguru + correlation IDs |
+| Rate Limiting | slowapi |
 | Gerenciamento | uv |
 
 ---
@@ -77,24 +78,28 @@ graph TB
 dashboard-produtividade-dev/
 ├── backend/
 │   ├── src/
-│   │   ├── __init__.py
-│   │   └── main.py          # Aplicação FastAPI
-│   ├── tests/                # Testes
-│   ├── docs/                 # Documentação do backend
+│   │   ├── main.py             # App FastAPI + CORS + rate limiting
+│   │   ├── config.py           # Pydantic Settings (.env)
+│   │   ├── database.py         # Engine SQLModel
+│   │   ├── logging_config.py   # Loguru + correlation IDs
+│   │   ├── github/             # Coleta via GraphQL API
+│   │   ├── rag/                # Pipeline RAG (embeddings, vector store, LLM)
+│   │   ├── routes/             # Endpoints REST
+│   │   └── services/           # Ingestão, métricas, persistência
+│   ├── tests/                  # Testes unitários + propriedade + integração
 │   ├── pyproject.toml
-│   ├── .python-version
 │   └── .env.example
 ├── frontend/
 │   ├── src/
-│   │   ├── __init__.py
-│   │   └── app.py            # Aplicação Streamlit
-│   ├── tests/                # Testes
-│   ├── docs/                 # Documentação do frontend
+│   │   ├── app.py              # App Streamlit (navegação)
+│   │   ├── api_client.py       # Cliente HTTP para o backend
+│   │   └── pages/              # Dashboard, Chat RAG, Configurações
+│   ├── tests/
 │   ├── pyproject.toml
-│   ├── .python-version
 │   └── .env.example
-├── scripts/                  # Scripts auxiliares
-├── .github/                  # Workflows CI/CD
+├── scripts/                    # Scripts auxiliares
+├── .github/workflows/          # CI/CD (lint + testes)
+├── docker-compose.yml          # Stack completa (Ollama + backend + frontend)
 └── README.md
 ```
 
@@ -115,9 +120,9 @@ dashboard-produtividade-dev/
 |----------|---------|
 | 1 - LLM | `ollama serve` |
 | 2 - Backend | `cd backend && uv run uvicorn src.main:app --host 0.0.0.0 --port 8000` |
-| 3 - Frontend | `cd frontend && npm run dev -- --host 0.0.0.0 --port 5173` |
+| 3 - Frontend | `cd frontend && uv run streamlit run src/app.py` |
 
-Acesse: **http://localhost:5173**
+Acesse: **http://localhost:8501**
 
 ### Ollama (LLM local)
 
@@ -148,7 +153,7 @@ cp .env.example .env
 uv run uvicorn src.main:app --host 0.0.0.0 --port 8000
 ```
 
-O backend estará disponível em `http://localhost:8000` (ou na porta definida em `APP_PORT` no `.env`).
+O backend estará disponível em `http://localhost:8000`.
 
 ### Frontend
 
@@ -157,8 +162,11 @@ cd frontend
 
 cp .env.example .env
 
-# Inicie o servidor de desenvolvimento
-npm run dev -- --host 0.0.0.0 --port 5173
+# Instale dependências
+uv sync
+
+# Inicie o servidor Streamlit
+uv run streamlit run src/app.py
 ```
 
 O frontend estará disponível em `http://localhost:8501`.
@@ -170,22 +178,29 @@ O frontend estará disponível em `http://localhost:8501`.
 ### Backend (`backend/.env`)
 
 ```env
-GITHUB_TOKEN=seu_token_aqui
-GITHUB_USERNAME=seu_usuario_aqui
-GITHUB_GRAPHQL_URL=https://api.github.com/graphql
-CHROMADB_PATH=./chroma_data
+GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
+GITHUB_USERNAME=seu_usuario
+
+LLM_PROVIDER=ollama
+LLM_MODEL=llama3.1
+OLLAMA_HOST=http://localhost:11434
+OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxx
+
+CHROMA_PATH=./data/chroma
+CHROMA_COLLECTION=github_activity
+
 SQLITE_DB_PATH=./data.db
-LOG_LEVEL=DEBUG
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=llama3.1:8b
-EMBEDDING_MODEL=intfloat/multilingual-e5-large
-APP_PORT=8000
+
+INGESTION_DAYS_BACK=90
+
+CORS_ORIGINS=["http://localhost:8501"]
 ```
 
 ### Frontend (`frontend/.env`)
 
 ```env
 BACKEND_API_URL=http://localhost:8000
+BACKEND_PUBLIC_URL=http://localhost:8000
 STREAMLIT_SERVER_PORT=8501
 ```
 
