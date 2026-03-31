@@ -36,7 +36,10 @@ def render():
             )
         else:
             for msg in st.session_state.chat_messages:
-                with st.chat_message(msg["role"], avatar="🧑‍💻" if msg["role"] == "user" else "🤖"):
+                avatar = (
+                    "🧑‍💻" if msg["role"] == "user" else "🤖"
+                )
+                with st.chat_message(msg["role"], avatar=avatar):
                     st.markdown(msg["content"])
                     if msg.get("evidence"):
                         st.info(f"📊 {msg['evidence']}", icon=None)

@@ -31,7 +31,12 @@ class TestCheckConnection:
         """Regra: /github/status retorna connected=True com login."""
         collector = GitHubCollector(token="ghp_test", days_back=90)
         mock_response = {"viewer": {"login": "testuser"}}
-        with patch.object(collector, "_query", new_callable=AsyncMock, return_value=mock_response):
+        with patch.object(
+            collector,
+            "_query",
+            new_callable=AsyncMock,
+            return_value=mock_response,
+        ):
             result = await collector.check_connection()
         assert result["connected"] is True
         assert result["username"] == "testuser"
@@ -41,7 +46,10 @@ class TestCheckConnection:
         """Regra: falha de rede retorna connected=False com mensagem de erro."""
         collector = GitHubCollector(token="ghp_bad", days_back=90)
         with patch.object(
-            collector, "_query", new_callable=AsyncMock, side_effect=Exception("timeout")
+            collector,
+            "_query",
+            new_callable=AsyncMock,
+            side_effect=Exception("timeout"),
         ):
             result = await collector.check_connection()
         assert result["connected"] is False
@@ -63,7 +71,10 @@ class TestFetchCommits:
                             "defaultBranchRef": {
                                 "target": {
                                     "history": {
-                                        "pageInfo": {"hasNextPage": False, "endCursor": None},
+                                        "pageInfo": {
+                                            "hasNextPage": False,
+                                            "endCursor": None,
+                                        },
                                         "nodes": [
                                             {
                                                 "oid": "abc1234567890",
@@ -100,7 +111,12 @@ class TestFetchCommits:
             "viewer": {
                 "repositories": {
                     "pageInfo": {"hasNextPage": False, "endCursor": None},
-                    "nodes": [{"nameWithOwner": "user/empty", "defaultBranchRef": None}],
+                    "nodes": [
+                        {
+                            "nameWithOwner": "user/empty",
+                            "defaultBranchRef": None,
+                        }
+                    ],
                 }
             }
         }
@@ -113,8 +129,11 @@ class TestFetchCommits:
 
 class TestFetchAllChunks:
     @pytest.mark.asyncio
-    async def test_aggregates_commits_prs_issues_into_chunks(self):
-        """Regra: fetch_all_chunks retorna tuplas (chunk_text, metadata) de todos os tipos."""
+    async def test_aggregates_commits_prs_issues_into_chunks(
+        self,
+    ):
+        """Regra: fetch_all_chunks retorna tuplas
+        (chunk_text, metadata) de todos os tipos."""
         collector = GitHubCollector(token="ghp_test", days_back=90)
         with (
             patch.object(
@@ -175,7 +194,10 @@ class TestFetchAllChunks:
                 side_effect=Exception("API error"),
             ),
             patch.object(
-                collector, "fetch_pull_requests", new_callable=AsyncMock, return_value=[]
+                collector,
+                "fetch_pull_requests",
+                new_callable=AsyncMock,
+                return_value=[],
             ),
             patch.object(
                 collector, "fetch_issues", new_callable=AsyncMock, return_value=[]

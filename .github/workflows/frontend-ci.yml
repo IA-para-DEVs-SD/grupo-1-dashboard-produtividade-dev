@@ -30,5 +30,8 @@ jobs:
       - name: Lint
         run: uv run ruff check .
 
+      - name: Security audit
+        run: uv run pip-audit
+
       - name: Test
-        run: uv run pytest -q --no-header || [ $? -eq 5 ]
+        run: uv run pytest -q --cov=src --cov-report=term-missing

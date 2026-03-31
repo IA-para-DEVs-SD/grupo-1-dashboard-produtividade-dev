@@ -48,7 +48,10 @@ class TestCORSMiddleware:
                 "Access-Control-Request-Method": "GET",
             },
         )
-        assert resp.headers.get("access-control-allow-origin") == "http://localhost:8501"
+        assert (
+            resp.headers.get("access-control-allow-origin")
+            == "http://localhost:8501"
+        )
 
 
 class TestRouterRegistration:

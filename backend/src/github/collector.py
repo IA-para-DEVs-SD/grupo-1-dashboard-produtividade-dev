@@ -1,3 +1,5 @@
+"""Coletor de dados do GitHub via GraphQL API."""
+
 from datetime import datetime, timedelta, timezone
 
 import httpx
@@ -9,6 +11,8 @@ GRAPHQL_URL = "https://api.github.com/graphql"
 
 
 class GitHubCollector:
+    """Coleta commits, PRs e issues do GitHub via GraphQL API."""
+
     def __init__(self, token: str, days_back: int = 90):
         self.token = token
         self.days_back = days_back
@@ -18,6 +22,7 @@ class GitHubCollector:
         }
 
     async def _query(self, query: str, variables: dict | None = None) -> dict:
+        """Executa query GraphQL na API do GitHub."""
         async with httpx.AsyncClient(timeout=30) as client:
             resp = await client.post(
                 GRAPHQL_URL,
@@ -31,6 +36,7 @@ class GitHubCollector:
             return data.get("data", {})
 
     async def check_connection(self) -> dict:
+        """Verifica conexão com o GitHub e retorna login do usuário."""
         try:
             data = await self._query("query { viewer { login } }")
             login = data.get("viewer", {}).get("login", "")
@@ -39,6 +45,7 @@ class GitHubCollector:
             return {"connected": False, "error": str(e)}
 
     async def fetch_commits(self) -> list[Commit]:
+        """Busca commits dos últimos N dias via GraphQL com paginação."""
         since = datetime.now(timezone.utc) - timedelta(days=self.days_back)
         query = """
         query($since: GitTimestamp!, $repoCursor: String, $commitCursor: String) {
@@ -71,7 +78,13 @@ class GitHubCollector:
         repo_cursor = None
 
         for _ in range(5):  # max 5 pages of repos = 100 repos
-            data = await self._query(query, {"since": since.isoformat(), "repoCursor": repo_cursor})
+            data = await self._query(
+                query,
+                {
+                    "since": since.isoformat(),
+                    "repoCursor": repo_cursor,
+                },
+            )
             repos = data.get("viewer", {}).get("repositories", {})
 
             for repo in repos.get("nodes", []):
@@ -100,6 +113,7 @@ class GitHubCollector:
         return commits
 
     async def fetch_pull_requests(self) -> list[PullRequest]:
+        """Busca PRs dos últimos N dias via GraphQL com paginação."""
         since = datetime.now(timezone.utc) - timedelta(days=self.days_back)
         query = """
         query($cursor: String) {
@@ -123,7 +137,9 @@ class GitHubCollector:
             pr_data = data.get("viewer", {}).get("pullRequests", {})
 
             for node in pr_data.get("nodes", []):
-                created = datetime.fromisoformat(node["createdAt"].replace("Z", "+00:00"))
+                created = datetime.fromisoformat(
+                    node["createdAt"].replace("Z", "+00:00")
+                )
                 if created < since:
                     return prs  # PRs are ordered by date, stop when too old
                 prs.append(PullRequest(
@@ -143,11 +159,13 @@ class GitHubCollector:
         return prs
 
     async def fetch_issues(self) -> list[Issue]:
+        """Busca issues dos últimos N dias via GraphQL com paginação."""
         since = datetime.now(timezone.utc) - timedelta(days=self.days_back)
         query = """
         query($cursor: String) {
           viewer {
-            issues(first: 100, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}) {
+            issues(first: 100, after: $cursor,
+                   orderBy: {field: CREATED_AT, direction: DESC}) {
               pageInfo { hasNextPage endCursor }
               nodes {
                 title state number createdAt closedAt
@@ -166,7 +184,9 @@ class GitHubCollector:
             issue_data = data.get("viewer", {}).get("issues", {})
 
             for node in issue_data.get("nodes", []):
-                created = datetime.fromisoformat(node["createdAt"].replace("Z", "+00:00"))
+                created = datetime.fromisoformat(
+                    node["createdAt"].replace("Z", "+00:00")
+                )
                 if created < since:
                     return issues
                 issues.append(Issue(
@@ -175,7 +195,12 @@ class GitHubCollector:
                     number=node.get("number", 0),
                     created_at=created,
                     closed_at=node.get("closedAt"),
-                    labels=[lb["name"] for lb in node.get("labels", {}).get("nodes", [])],
+                    labels=[
+                        lb["name"]
+                        for lb in node.get("labels", {}).get(
+                            "nodes", []
+                        )
+                    ],
                     repository=node.get("repository", {}).get("nameWithOwner", ""),
                 ))
 

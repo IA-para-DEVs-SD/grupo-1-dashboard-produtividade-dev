@@ -1,25 +1,23 @@
+"""Serviço de embeddings — gera vetores a partir de texto usando MiniLM."""
+
+from functools import lru_cache
+
 from sentence_transformers import SentenceTransformer
 
-_model: SentenceTransformer | None = None
 
-
+@lru_cache(maxsize=1)
 def _get_model() -> SentenceTransformer:
-    global _model
-    if _model is None:
-        _model = SentenceTransformer("all-MiniLM-L6-v2")
-    return _model
+    """Carrega o modelo de embeddings (singleton via lru_cache)."""
+    return SentenceTransformer("all-MiniLM-L6-v2")
 
 
 class EmbeddingService:
-    _instance: "EmbeddingService | None" = None
-
-    def __new__(cls) -> "EmbeddingService":
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
+    """Serviço para geração de embeddings de texto."""
 
     def embed(self, text: str) -> list[float]:
+        """Gera embedding para um texto."""
         return _get_model().encode(text).tolist()
 
     def embed_batch(self, texts: list[str]) -> list[list[float]]:
+        """Gera embeddings para uma lista de textos."""
         return _get_model().encode(texts).tolist()

@@ -94,14 +94,19 @@ async def run_ingestion() -> int:
 
         chunks = [c[0] for c in chunks_with_meta]
         metadatas = [c[1] for c in chunks_with_meta]
-        ids = [hashlib.md5(c.encode()).hexdigest() for c in chunks]
+        ids = [hashlib.sha256(c.encode()).hexdigest() for c in chunks]
         embeddings = embedder.embed_batch(chunks)
         _status.progress = len(chunks)
         _log(f"✓ {len(embeddings)} embeddings gerados")
 
         _status.step = "Salvando no ChromaDB"
         _log("Salvando no banco vetorial...")
-        store.upsert(ids=ids, embeddings=embeddings, documents=chunks, metadatas=metadatas)
+        store.upsert(
+            ids=ids,
+            embeddings=embeddings,
+            documents=chunks,
+            metadatas=metadatas,
+        )
         _log(f"✓ {len(chunks)} chunks armazenados no ChromaDB")
 
         _status.step = "Concluído"

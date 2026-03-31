@@ -51,7 +51,14 @@ def get_llm_config():
 
 def save_llm_config(provider: str, model: str, api_key: str = ""):
     """Salva configuração LLM."""
-    return _post("/settings/llm", {"provider": provider, "model": model, "api_key": api_key})
+    return _post(
+        "/settings/llm",
+        {
+            "provider": provider,
+            "model": model,
+            "api_key": api_key,
+        },
+    )
 
 
 # --- Métricas ---
@@ -97,7 +104,11 @@ def get_ingest_status():
 
 # --- Export ---
 
-def get_export_url(fmt: str, date_from: str | None = None, date_to: str | None = None) -> str:
+def get_export_url(
+    fmt: str,
+    date_from: str | None = None,
+    date_to: str | None = None,
+) -> str:
     """Retorna URL de export (CSV ou PDF)."""
     params = []
     if date_from:

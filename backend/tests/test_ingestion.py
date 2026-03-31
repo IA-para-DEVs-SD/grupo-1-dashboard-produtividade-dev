@@ -64,8 +64,14 @@ class TestRunIngestion:
 
         with (
             patch("src.services.ingestion.settings") as mock_settings,
-            patch("src.services.ingestion.GitHubCollector", return_value=mock_collector),
-            patch("src.services.ingestion.EmbeddingService", return_value=mock_embedder),
+            patch(
+                "src.services.ingestion.GitHubCollector",
+                return_value=mock_collector,
+            ),
+            patch(
+                "src.services.ingestion.EmbeddingService",
+                return_value=mock_embedder,
+            ),
             patch("src.services.ingestion.VectorStore", return_value=mock_store),
         ):
             mock_settings.github_token = "ghp_test123"

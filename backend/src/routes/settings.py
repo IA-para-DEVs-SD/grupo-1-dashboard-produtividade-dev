@@ -1,7 +1,12 @@
-from fastapi import APIRouter
+"""Rotas de configuração — GitHub e LLM."""
+
+import re
+
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from src.config import settings
+from src.services.env_writer import save_to_env
 
 router = APIRouter(tags=["settings"])
 
@@ -27,17 +32,18 @@ def get_github_config():
 
 @router.post("/settings/github")
 def save_github_config(config: GitHubConfig):
-    import re
-    # Validate token format (ghp_, ghs_, gho_, ghu_, github_pat_)
-    if config.token and not re.match(r"^(gh[psou]_|github_pat_)[a-zA-Z0-9_]{20,}$", config.token):
-        from fastapi import HTTPException
-        raise HTTPException(400, "Token inválido. Use formato ghp_xxx, ghs_xxx ou github_pat_xxx")
-    
+    """Salva configuração do GitHub (token + username)."""
+    if config.token and not re.match(
+        r"^(gh[psou]_|github_pat_)[a-zA-Z0-9_]{20,}$", config.token
+    ):
+        raise HTTPException(
+            400, "Token inválido. Use formato ghp_xxx, ghs_xxx ou github_pat_xxx"
+        )
+
     settings.github_token = config.token
     settings.github_username = config.username
-    
-    # Persist to .env
-    _save_to_env({"GITHUB_TOKEN": config.token, "GITHUB_USERNAME": config.username})
+
+    save_to_env({"GITHUB_TOKEN": config.token, "GITHUB_USERNAME": config.username})
     return {"status": "ok"}
 
 
@@ -52,44 +58,24 @@ def get_llm_config():
 
 @router.post("/settings/llm")
 def save_llm_config(config: LLMConfig):
+    """Salva configuração do LLM (provider, model, api_key)."""
     import os
+
     settings.llm_provider = config.provider
     settings.llm_model = config.model
-    
+
     env_updates = {"LLM_PROVIDER": config.provider, "LLM_MODEL": config.model}
-    
+
     if config.api_key:
         settings.openai_api_key = config.api_key
         os.environ["OPENAI_API_KEY"] = config.api_key
         env_updates["OPENAI_API_KEY"] = config.api_key
-    
-    _save_to_env(env_updates)
-    
+
+    save_to_env(env_updates)
+
     # Reset LLM client singleton to pick up new config
     from src.rag.llm_client import LLMClient
-    LLMClient._instance = None
+
+    LLMClient.reset()
     return {"status": "ok"}
 
-
-def _save_to_env(updates: dict):
-    """Persist settings to .env file."""
-    import os
-    env_path = os.path.join(os.path.dirname(__file__), "../../.env")
-    
-    # Read existing
-    existing = {}
-    if os.path.exists(env_path):
-        with open(env_path) as f:
-            for line in f:
-                line = line.strip()
-                if line and "=" in line and not line.startswith("#"):
-                    key, val = line.split("=", 1)
-                    existing[key] = val
-    
-    # Update
-    existing.update(updates)
-    
-    # Write back
-    with open(env_path, "w") as f:
-        for key, val in existing.items():
-            f.write(f"{key}={val}\n")
