@@ -101,7 +101,12 @@ async def run_ingestion() -> int:
 
         _status.step = "Salvando no ChromaDB"
         _log("Salvando no banco vetorial...")
-        store.upsert(ids=ids, embeddings=embeddings, documents=chunks, metadatas=metadatas)
+        store.upsert(
+            ids=ids,
+            embeddings=embeddings,
+            documents=chunks,
+            metadatas=metadatas,
+        )
         _log(f"✓ {len(chunks)} chunks armazenados no ChromaDB")
 
         _status.step = "Concluído"

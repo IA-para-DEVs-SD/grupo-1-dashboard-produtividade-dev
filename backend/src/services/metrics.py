@@ -76,7 +76,11 @@ class MetricsService:
                 merged = datetime.fromisoformat(str(p.merged_at).replace("Z", "+00:00"))
                 delta = merged - p.created_at
                 merge_times.append(delta.total_seconds() / 3600)
-        avg_merge_hours = round(sum(merge_times) / len(merge_times), 1) if merge_times else 0
+        avg_merge_hours = (
+            round(sum(merge_times) / len(merge_times), 1)
+            if merge_times
+            else 0
+        )
 
         # Hot repos
         repo_counts = Counter(c.repository for c in commits)
@@ -100,7 +104,11 @@ class MetricsService:
         _set_cached(cache_key, result)
         return result
 
-    async def weekly(self, from_date: str | None = None, to_date: str | None = None) -> dict:
+    async def weekly(
+        self,
+        from_date: str | None = None,
+        to_date: str | None = None,
+    ) -> dict:
         """Return weekly aggregated data for charts."""
         cache_key = f"weekly:{from_date}:{to_date}"
         cached = _get_cached(cache_key)
@@ -128,7 +136,10 @@ class MetricsService:
             label = week_start.strftime("%d/%m")
 
             week_commits = sum(1 for c in commits if week_start <= c.date < week_end)
-            week_prs_opened = sum(1 for p in prs if week_start <= p.created_at < week_end)
+            week_prs_opened = sum(
+                1 for p in prs
+                if week_start <= p.created_at < week_end
+            )
             week_prs_closed = sum(
                 1 for p in prs
                 if p.merged_at and week_start <= datetime.fromisoformat(

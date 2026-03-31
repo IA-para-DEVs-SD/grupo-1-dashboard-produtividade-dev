@@ -4,25 +4,25 @@ version = "0.1.0"
 description = "Frontend Streamlit do Dashboard de Produtividade Dev"
 requires-python = ">=3.12"
 dependencies = [
-    "streamlit>=1.40.0",
-    "plotly>=5.24.0",
-    "requests>=2.32.0",
-    "python-dotenv>=1.0.0",
-    "streamlit-option-menu>=0.4.0",
-    "streamlit-extras>=1.2.0",
+    "streamlit==1.55.0",
+    "plotly==6.6.0",
+    "requests==2.33.0",
+    "python-dotenv==1.2.2",
+    "streamlit-option-menu==0.4.0",
+    "streamlit-extras==1.2.0",
 ]
 
 [dependency-groups]
 dev = [
-    "pytest>=8.0.0",
-    "pytest-cov>=6.0.0",
-    "ruff>=0.9.0",
-    "pip-audit>=2.7.0",
+    "pytest==9.0.2",
+    "pytest-cov==6.0.0",
+    "ruff==0.15.8",
+    "pip-audit==2.7.0",
 ]
 
 [tool.ruff]
 target-version = "py312"
-line-length = 100
+line-length = 88
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]

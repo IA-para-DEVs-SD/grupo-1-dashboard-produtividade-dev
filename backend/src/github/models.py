@@ -66,7 +66,9 @@ class Issue(BaseModel):
         closed = f" — fechada em {self.closed_at:%Y-%m-%d}" if self.closed_at else ""
         return (
             f"Issue #{self.number}: {self.title} — estado: {self.state}"
-            f" — repo: {self.repository} — criada em {self.created_at:%Y-%m-%d}{labels}{closed}"
+            f" — repo: {self.repository}"
+            f" — criada em {self.created_at:%Y-%m-%d}"
+            f"{labels}{closed}"
         )
 
     def to_metadata(self) -> dict:

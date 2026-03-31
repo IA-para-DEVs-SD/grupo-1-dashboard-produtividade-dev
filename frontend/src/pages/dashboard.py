@@ -105,7 +105,11 @@ def _render_kpis(m: dict, visible: list[str]):
         cards.append(("📈 Commits/semana", m.get("commits_por_semana", 0), None))
     if "prs" in visible:
         cards.append(("🔀 PRs merged", m.get("prs_merged", 0), None))
-        cards.append(("⏱️ Tempo merge", f"{m.get('tempo_medio_merge_horas', 0)}h", None))
+        cards.append((
+            "⏱️ Tempo merge",
+            f"{m.get('tempo_medio_merge_horas', 0)}h",
+            None,
+        ))
     if "issues" in visible:
         cards.append(("🐛 Issues fechadas", m.get("issues_fechadas", 0), None))
 
@@ -146,7 +150,10 @@ def _render_charts(w: dict, visible: list[str]):
                     )
                 )
                 fig.update_layout(
-                    title=dict(text="Commits por Semana", font=dict(size=16, color="#1e293b")),
+                    title=dict(
+                        text="Commits por Semana",
+                        font=dict(size=16, color="#1e293b"),
+                    ),
                     height=380,
                     plot_bgcolor="rgba(0,0,0,0)",
                     paper_bgcolor="rgba(0,0,0,0)",
@@ -173,13 +180,22 @@ def _render_charts(w: dict, visible: list[str]):
                     )
                 )
                 fig.update_layout(
-                    title=dict(text="PRs Abertos vs Fechados", font=dict(size=16, color="#1e293b")),
+                    title=dict(
+                        text="PRs Abertos vs Fechados",
+                        font=dict(size=16, color="#1e293b"),
+                    ),
                     height=380,
                     plot_bgcolor="rgba(0,0,0,0)",
                     paper_bgcolor="rgba(0,0,0,0)",
                     xaxis=dict(gridcolor="#f1f5f9"),
                     yaxis=dict(gridcolor="#f1f5f9"),
                     margin=dict(l=40, r=20, t=50, b=40),
-                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                    legend=dict(
+                        orientation="h",
+                        yanchor="bottom",
+                        y=1.02,
+                        xanchor="right",
+                        x=1,
+                    ),
                 )
                 st.plotly_chart(fig, use_container_width=True)

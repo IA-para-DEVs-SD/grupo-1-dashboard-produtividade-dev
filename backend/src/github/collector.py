@@ -78,7 +78,13 @@ class GitHubCollector:
         repo_cursor = None
 
         for _ in range(5):  # max 5 pages of repos = 100 repos
-            data = await self._query(query, {"since": since.isoformat(), "repoCursor": repo_cursor})
+            data = await self._query(
+                query,
+                {
+                    "since": since.isoformat(),
+                    "repoCursor": repo_cursor,
+                },
+            )
             repos = data.get("viewer", {}).get("repositories", {})
 
             for repo in repos.get("nodes", []):
@@ -131,7 +137,9 @@ class GitHubCollector:
             pr_data = data.get("viewer", {}).get("pullRequests", {})
 
             for node in pr_data.get("nodes", []):
-                created = datetime.fromisoformat(node["createdAt"].replace("Z", "+00:00"))
+                created = datetime.fromisoformat(
+                    node["createdAt"].replace("Z", "+00:00")
+                )
                 if created < since:
                     return prs  # PRs are ordered by date, stop when too old
                 prs.append(PullRequest(
@@ -156,7 +164,8 @@ class GitHubCollector:
         query = """
         query($cursor: String) {
           viewer {
-            issues(first: 100, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}) {
+            issues(first: 100, after: $cursor,
+                   orderBy: {field: CREATED_AT, direction: DESC}) {
               pageInfo { hasNextPage endCursor }
               nodes {
                 title state number createdAt closedAt
@@ -175,7 +184,9 @@ class GitHubCollector:
             issue_data = data.get("viewer", {}).get("issues", {})
 
             for node in issue_data.get("nodes", []):
-                created = datetime.fromisoformat(node["createdAt"].replace("Z", "+00:00"))
+                created = datetime.fromisoformat(
+                    node["createdAt"].replace("Z", "+00:00")
+                )
                 if created < since:
                     return issues
                 issues.append(Issue(
@@ -184,7 +195,12 @@ class GitHubCollector:
                     number=node.get("number", 0),
                     created_at=created,
                     closed_at=node.get("closedAt"),
-                    labels=[lb["name"] for lb in node.get("labels", {}).get("nodes", [])],
+                    labels=[
+                        lb["name"]
+                        for lb in node.get("labels", {}).get(
+                            "nodes", []
+                        )
+                    ],
                     repository=node.get("repository", {}).get("nameWithOwner", ""),
                 ))
 

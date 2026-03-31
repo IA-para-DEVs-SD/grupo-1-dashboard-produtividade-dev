@@ -61,7 +61,9 @@ class RAGPipeline:
             if isinstance(recommendation, (list, set)):
                 recommendation = "\n• " + "\n• ".join(str(r) for r in recommendation)
             elif isinstance(recommendation, dict):
-                recommendation = "\n• " + "\n• ".join(str(v) for v in recommendation.values())
+                recommendation = "\n• " + "\n• ".join(
+                    str(v) for v in recommendation.values()
+                )
             elif not isinstance(recommendation, str):
                 recommendation = str(recommendation)
             

@@ -75,7 +75,8 @@ st.markdown("""
     }
 
     /* Containers com borda */
-    div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapper"] {
+    div[data-testid="stVerticalBlock"]
+    > div[data-testid="stVerticalBlockBorderWrapper"] {
         border-radius: 16px;
         border-color: #e9d5ff;
     }
@@ -120,7 +121,8 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
     st.markdown(
-        "<p style='text-align:center; font-size:11px; opacity:0.5; margin-bottom:20px;'>"
+        "<p style='text-align:center; font-size:11px;"
+        " opacity:0.5; margin-bottom:20px;'>"
         "Análise inteligente de produtividade</p>",
         unsafe_allow_html=True,
     )
@@ -144,7 +146,11 @@ with st.sidebar:
                 "--hover-color": "rgba(139, 92, 246, 0.2)",
             },
             "nav-link-selected": {
-                "background": "linear-gradient(135deg, rgba(139,92,246,0.3), rgba(6,182,212,0.2))",
+                "background": (
+                    "linear-gradient(135deg,"
+                    " rgba(139,92,246,0.3),"
+                    " rgba(6,182,212,0.2))"
+                ),
                 "color": "#f5f3ff",
                 "font-weight": "600",
                 "border-left": "3px solid #a78bfa",

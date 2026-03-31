@@ -48,7 +48,8 @@ class TestInsightsValidation:
 # ---------------------------------------------------------------------------
 class TestInsightsPipelineIntegration:
     def test_valid_query_returns_insight_with_all_fields(self, client):
-        """Regra: insight retornado deve ter summary, evidence, recommendation, sources."""
+        """Regra: insight retornado deve ter summary, evidence,
+        recommendation, sources."""
         mock_pipeline = MagicMock()
 
         from src.rag.models import Insight
@@ -116,7 +117,10 @@ class TestIngestTriggerIntegration:
         assert resp.status_code == 200
         data = resp.json()
         assert data["status"] == "started"
-        assert "background" in data["message"].lower() or "iniciada" in data["message"].lower()
+        assert (
+            "background" in data["message"].lower()
+            or "iniciada" in data["message"].lower()
+        )
 
     def test_ingest_status_returns_expected_fields(self, client):
         """Regra: GET /ingest/status retorna campos de monitoramento."""
@@ -181,7 +185,11 @@ class TestHealthDetailedIntegration:
     def test_health_detailed_returns_all_checks(self, client):
         """Regra: /health/detailed retorna status de api, chromadb, github, llm."""
         with (
-            patch("src.routes.health._check_chromadb", new_callable=AsyncMock, return_value="ok"),
+            patch(
+                "src.routes.health._check_chromadb",
+                new_callable=AsyncMock,
+                return_value="ok",
+            ),
             patch(
                 "src.routes.health._check_github",
                 new_callable=AsyncMock,
@@ -209,9 +217,21 @@ class TestHealthDetailedIntegration:
     def test_health_detailed_all_ok(self, client):
         """Regra: quando todos os serviços estão ok, status geral é 'ok'."""
         with (
-            patch("src.routes.health._check_chromadb", new_callable=AsyncMock, return_value="ok"),
-            patch("src.routes.health._check_github", new_callable=AsyncMock, return_value="ok"),
-            patch("src.routes.health._check_llm", new_callable=AsyncMock, return_value="ok"),
+            patch(
+                "src.routes.health._check_chromadb",
+                new_callable=AsyncMock,
+                return_value="ok",
+            ),
+            patch(
+                "src.routes.health._check_github",
+                new_callable=AsyncMock,
+                return_value="ok",
+            ),
+            patch(
+                "src.routes.health._check_llm",
+                new_callable=AsyncMock,
+                return_value="ok",
+            ),
         ):
             resp = client.get("/health/detailed")
 

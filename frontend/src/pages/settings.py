@@ -61,7 +61,10 @@ def _render_github_section():
                 type="password",
                 placeholder="ghp_xxxxxxxxxxxx" if not has_token else "••••••••",
             )
-            submitted = st.form_submit_button("💾 Salvar GitHub", use_container_width=True)
+            submitted = st.form_submit_button(
+                "💾 Salvar GitHub",
+                use_container_width=True,
+            )
 
             if submitted:
                 if not token or not username:
@@ -95,7 +98,11 @@ def _render_llm_section():
                 "Provider",
                 ["ollama", "openai"],
                 index=0 if saved_provider == "ollama" else 1,
-                format_func=lambda x: "🖥️ Ollama (local)" if x == "ollama" else "☁️ OpenAI (API)",
+                format_func=lambda x: (
+                    "🖥️ Ollama (local)"
+                    if x == "ollama"
+                    else "☁️ OpenAI (API)"
+                ),
             )
 
             models = OLLAMA_MODELS if provider == "ollama" else OPENAI_MODELS
